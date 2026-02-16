@@ -156,7 +156,7 @@ def post_transaction(data):
         # Update table status
         if data.get("table_assigned"):
             cursor.execute(
-                "UPDATE table_management SET status = 'Occupied' WHERE tableID = %s",
+                "UPDATE table_management SET status = 'Pending' WHERE tableID = %s",
                 (data.get("table_assigned"),)
             )
 

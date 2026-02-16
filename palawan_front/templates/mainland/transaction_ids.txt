@@ -1,0 +1,10 @@
+AvailablemainGuest innerText
+AvailablemainGuestcontact innerText
+for loop: addon_guestInputX where x is in for loop use value
+
+
+totalBillText innerText
+discountPercentText innerText
+netBillingText innerText
+amountPaidText innerText
+totalChangeText innerText

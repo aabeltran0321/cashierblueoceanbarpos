@@ -35,5 +35,9 @@
     "type_of_payment": "Cash"
 }
 
+[{"multiplier": 3500, "deck": "skydeck", "boatride":500, "entrancefee":500},
+{"service": "CheeseBurger", "unit_price": 500, "qty":5},
+{"service": "Spaghetti", "unit_price": 300, "qty":10}]
+
 [{"service": "CheeseBurger", "unit_price": 500, "qty":5},
 {"service": "Spaghetti", "unit_price": 300, "qty":10}]

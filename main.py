@@ -397,6 +397,7 @@ def post_transaction_route():
             }), 400
 
         result = post_transaction(data=data)
+        
 
         if result["status"] == "success":
             return jsonify(result), 201
@@ -404,6 +405,7 @@ def post_transaction_route():
             return jsonify(result), 500
 
     except Exception as e:
+        print(e)
         return jsonify({"status": "error", "message": str(e)})
 
 @app.route("/transactions/<int:id>", methods=["PUT"])
@@ -794,12 +796,18 @@ def mainland_tablemanagement():
 
     deck_prices = {item['deck']: item['price'] for item in get_deck()}
 
+    deck_prices['skydeck'] = deck_prices['skydeck'] - deck_prices['boatride'] - deck_prices['entrancefee']
+    deck_prices['maindeck'] = deck_prices['maindeck'] - deck_prices['boatride'] - deck_prices['entrancefee']    
+
     for row_table in tables:
         if row_table['transaction_id'] is not None:
             transaction = get_transaction_by_transaction_id(row_table['transaction_id'])
+            if transaction['status'] == "Pending":
+                for service in transaction['services_availed'][1:]:
+                    transaction['totalnetbilling'] += (service['unit_price']*service['qty'])
             row_table.update(transaction)
 
-    print(tables)
+    #print(tables)
     return render_template("/mainland/tablemanagement.html",
                            tables=tables,
                            deck_prices=deck_prices)
