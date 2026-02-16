@@ -1,0 +1,54 @@
+{% set selected_deck = selected_deck or 'skydeck' %} {# pass selected_deck from backend #}
+
+<div class="grid grid-cols-5 gap-y-8 gap-x-10 max-w-6xl mx-auto pb-20 px-8">
+    {% for table in tables if table.location == selected_deck %}
+        {# Determine border color based on status #}
+        {% if table.status == 'Available' %}
+            {% set border_color = 'border-statusGray' %}
+        {% elif table.status == 'Pending' %}
+            {% set border_color = 'border-accentPurple' %}
+        {% else %}
+            {% set border_color = 'border-statusOrange' %}
+        {% endif %}
+
+        {# Multiplier based on deck #}
+        {% if table.location == 'skydeck' %}
+            {% set multiplier = 3500 %}
+        {% elif table.location == 'maindeck' %}
+            {% set multiplier = 2500 %}
+        {% else %}
+            {% set multiplier = 3000 %}
+        {% endif %}
+
+        <div onclick="openModal('{{ table.tableID }}')"
+             class="flex flex-col justify-around py-2 active-press relative w-full aspect-[3/4] max-w-[150px] {{ border_color }} rounded-2xl flex items-center justify-center bg-bgPanel hover:bg-white/5 cursor-pointer mx-auto group
+             {% if 'VIP' in table.tableName %} row-span-2 {% endif %}
+             {% if table.status == 'Pending' %} shadow-[0_0_15px_rgba(220,38,38,0.1)] {% endif %}">
+            
+            {# Chairs - simple layout #}
+            <div class="chair chair-left pos-1 {{ border_color }}"></div>
+            <div class="chair chair-left pos-2 {{ border_color }}"></div>
+            <div class="chair chair-right pos-1 {{ border_color }}"></div>
+            <div class="chair chair-right pos-2 {{ border_color }}"></div>
+            {% if 'VIP' in table.tableName %}
+                <div class="chair chair-left pos-mid {{ border_color }}"></div>
+                <div class="chair chair-right pos-mid {{ border_color }}"></div>
+            {% endif %}
+
+            {# Table name #}
+            <div class="w-16 h-16 {% if 'VIP' in table.tableName %} w-20 h-20 text-xl {% else %} text-2xl {% endif %} bg-white rounded-full flex items-center justify-center text-black font-bold group-hover:scale-110 transition-transform">
+                {{ table.tableName }}
+            </div>
+
+            {# Show billing only if transaction exists #}
+            {% if table.transaction_id %}
+                {% set total_consumable = table.capacity * multiplier %}
+                <div class="flex flex-col gap-1 text-center">
+                    <p class="text-[12px] text-statusGreen">Total: Php{{ '{:,.2f}'.format(total_consumable) }}</p>
+                    {% set remaining = total_consumable - table.totalnetbilling %}
+                    <p class="text-[10px] text-statusRed">Remaining: Php{{ '{:,.2f}'.format(remaining) }}</p>
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>

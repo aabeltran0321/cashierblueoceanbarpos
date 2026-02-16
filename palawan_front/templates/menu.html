@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Blue Ocean Bar</title>
+</head>
+
+<body class="bg-[#0f1115] text-gray-200 font-sans p-4 min-h-screen">
+
+    <div class="flex flex-wrap items-center gap-4 mb-6">
+        <div class="bg-[#1e2128] rounded-full px-4 py-2 flex items-center gap-3 border border-gray-700">
+            <div class="w-8 h-8 bg-orange-400 rounded-full flex items-center justify-center overflow-hidden">
+                <img src="../static/images/error.jpeg" alt="User">
+            </div>
+            <span class="text-xs font-mono text-gray-400">TX-ID-0889372261-00388</span>
+        </div>
+        <div class="bg-[#1e2128] rounded-full px-8 py-2 border border-gray-700 font-semibold">
+            Table 01
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <div class="lg:col-span-8 flex flex-col gap-4">
+
+            <div class="grid grid-cols-3 gap-2">
+                <button onclick="window.location.href='./tablemanagement'"
+                    class="bg-[#2a2d35] py-4 rounded-lg border border-gray-700 hover:bg-[#353942] transition">
+                    Table Management
+                </button>
+                <button onclick="window.location.href='./menu'" class="bg-[#3b1a5a] py-4 rounded-lg border border-purple-500 text-purple-200 font-bold">
+                    Food Order
+                </button>
+                <button class="bg-[#2a2d35] py-4 rounded-lg border border-gray-700 hover:bg-[#353942] transition">
+                    Recreational Activities
+                </button>
+            </div>
+
+            <div class="flex flex-col md:flex-row gap-4">
+
+                <div class="flex md:flex-col gap-2 overflow-x-auto md:w-32 shrink-0" id="category-buttons">
+                    
+                </div>
+
+                <div id="menu-grid" class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3 flex-grow content-start">
+                    <!-- JS -->
+                </div>
+
+            </div>
+        </div>
+
+        <div
+            class="lg:col-span-4 bg-[#1e2128] rounded-xl border border-gray-700 flex flex-col overflow-hidden h-[calc(100vh-100px)] sticky top-4">
+            <div class="p-4 border-b border-gray-700 flex justify-between items-center">
+                <h2 class="font-bold text-lg">Table 01</h2>
+                <button onclick="clearCart()" class="text-red-400 text-sm hover:underline">Clear All</button>
+            </div>
+
+            <div class="p-4 flex-grow overflow-y-auto space-y-4" id="cart-container">
+                <div class="text-xs text-center text-gray-500 italic mt-10">No items selected</div>
+            </div>
+
+            <div class="p-4 bg-[#16191e] border-t border-gray-700">
+                <div class="flex justify-between items-end mb-4">
+                    <span class="text-[10px] text-gray-500" id="current-date"></span>
+                    <div class="text-right">
+                        <span class="text-xs text-gray-400">Total:</span>
+                        <span class="text-lg font-bold ml-1 text-green-400" id="total-price">P 0.00</span>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <button
+                        class="bg-[#2d123d] text-white py-3 rounded-lg font-semibold hover:bg-[#3d1a52] transition">Save
+                        Tab</button>
+                    <button onclick="submitOrder()"
+                        class="bg-[#9c5fbe] text-white py-3 rounded-lg font-semibold hover:bg-[#a86ecd] transition">Place
+                        Order</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // 1. IMPORT DATA FROM PYTHON
+        // We use Jinja's |tojson to convert the Python Dict into a JS Object
+        const menuData = {{ menu_categories | tojson }};
+
+            function renderCategoryButtons() {
+            const container = document.getElementById('category-buttons');
+            container.innerHTML = '';
+
+            Object.keys(menuData).forEach(category => {
+                const btn = document.createElement('div');
+                btn.id = `btn-${category}`;
+                btn.className = "cursor-pointer flex flex-col items-center justify-center p-2 rounded-lg border border-gray-700 hover:bg-[#2a2d35] min-w-[80px] h-24 text-[10px] uppercase text-center gap-2 transition";
+                btn.innerHTML = `
+                    <i class="text-[25px] fa-solid fa-utensils"></i>
+                    ${category}
+                `;
+                btn.onclick = () => filterCategory(category);
+                container.appendChild(btn);
+            });
+}
+
+        // State Variables
+        let cart = [];
+        let currentCategory = 'Main Dish';
+
+        // Colors for the cards (cycled)
+        const colors = ['bg-[#4a2b6d]', 'bg-[#5a3b7d]', 'bg-[#6a4b8d]', 'bg-[#9a6bcd]', 'bg-[#b388eb]'];
+
+        // --- INITIALIZATION ---
+            document.addEventListener('DOMContentLoaded', () => {
+                updateDate();
+                renderCategoryButtons(); // generate buttons dynamically
+                filterCategory(Object.keys(menuData)[0]); // select first category by default
+            });
+        // --- FILTERING LOGIC ---
+        function filterCategory(categoryName) {
+            currentCategory = categoryName;
+
+            // Update Sidebar Styling (Active State)
+            document.querySelectorAll('[id^="btn-"]').forEach(btn => {
+                // Reset to default style
+                btn.classList.remove('border-purple-600', 'bg-[#2a1b3d]');
+                btn.classList.add('border-gray-700');
+                // Reset icon color
+                btn.firstElementChild.classList.remove('border-purple-400');
+                btn.firstElementChild.classList.add('border-gray-600');
+            });
+
+            // Set Active Style
+            const activeBtn = document.getElementById(`btn-${categoryName}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('border-gray-700');
+                activeBtn.classList.add('border-purple-600', 'bg-[#2a1b3d]');
+                activeBtn.firstElementChild.classList.remove('border-gray-600');
+                activeBtn.firstElementChild.classList.add('border-purple-400');
+            }
+
+            renderMenu();
+        }
+
+        // --- RENDERING MENU ITEMS ---
+        function renderMenu() {
+            const grid = document.getElementById('menu-grid');
+            grid.innerHTML = '';
+
+            const items = menuData[currentCategory];
+            if (!items) return;
+
+            items.forEach((item, index) => {
+                const colorClass = colors[index % colors.length];
+
+                const card = document.createElement('div');
+                // Added overflow-hidden to keep the image corners rounded
+                card.className = `${colorClass} rounded-lg flex flex-col cursor-pointer hover:opacity-95 hover:scale-[1.02] transition shadow-lg overflow-hidden border border-gray-700`;
+                card.onclick = () => addToCart(item);
+
+                // We use backticks to create the HTML structure
+                // The image source points to your static folder
+                card.innerHTML = `
+            <div class="w-full h-24 bg-gray-800 overflow-hidden">
+                <img src="/static/images/${item.photo_url}" 
+                     alt="${item.menu_name}" 
+                     class="w-full h-full object-cover"
+                     onerror="this.src='/static/images/icon.jpg'">
+            </div>
+            <div class="p-3 flex flex-col justify-between flex-grow">
+                <span class="text-xs font-semibold leading-tight mb-2">${item.menu_name}</span>
+                <div class="flex justify-between items-end">
+                    <span class="text-[10px] opacity-70 uppercase tracking-wide">${currentCategory}</span>
+                    <span class="text-sm font-bold text-white">P ${item.unit_price}</span>
+                </div>
+            </div>
+        `;
+                grid.appendChild(card);
+            });
+        }
+
+        // --- CART CALCULATION LOGIC ---
+        function addToCart(item) {
+            // Check if item already exists to increment quantity (optional, but good for POS)
+            const existingItem = cart.find(i => i.menu_id === item.menu_id);
+            if (existingItem) {
+                existingItem.qty += 1;
+            } else {
+                cart.push({ ...item, qty: 1 });
+            }
+            renderCart();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            renderCart();
+        }
+
+        function clearCart() {
+            cart = [];
+            renderCart();
+        }
+
+        /*
+        function renderCart() {
+            const container = document.getElementById('cart-container');
+            const totalEl = document.getElementById('total-price');
+
+            container.innerHTML = '';
+            let total = 0;
+
+            if (cart.length === 0) {
+                container.innerHTML = '<div class="text-xs text-center text-gray-500 italic mt-10">No items selected</div>';
+                totalEl.innerText = 'P 0.00';
+                return;
+            }
+
+            cart.forEach((item, index) => {
+                const itemTotal = item.unit_price * item.qty;
+                total += itemTotal;
+
+                const row = document.createElement('div');
+                row.className = "flex justify-between text-sm border-b border-gray-800 pb-2 mb-2 animate-fade-in";
+                row.innerHTML = `
+                    <div class="flex flex-col">
+                        <span class="font-medium">${item.qty} x ${item.menu_name}</span>
+                        <small class="text-gray-500 cursor-pointer hover:text-red-400" onclick="removeFromCart(${index})">Remove</small>
+                    </div>
+                    <span>P ${itemTotal.toFixed(2)}</span>
+                `;
+                container.appendChild(row);
+            });
+
+            totalEl.innerText = 'P ' + total.toFixed(2);
+        } */
+
+        // Kapag gusto my photo sa cart
+        function renderCart() {
+            const container = document.getElementById('cart-container');
+            const totalEl = document.getElementById('total-price');
+            container.innerHTML = '';
+            let total = 0;
+
+            if (cart.length === 0) {
+                container.innerHTML = '<div class="text-xs text-center text-gray-500 italic mt-10">No items selected</div>';
+                totalEl.innerText = 'P 0.00';
+                return;
+            }
+
+            cart.forEach((item, index) => {
+                const itemTotal = item.unit_price * item.qty;
+                total += itemTotal;
+
+                const row = document.createElement('div');
+                row.className = "flex items-center gap-3 text-sm border-b border-gray-800 pb-3 mb-3";
+                row.innerHTML = `
+                    <img onerror="this.src='/static/images/icon.jpg'" src="/static/images/${item.photo_url}" class="w-10 h-10 rounded object-cover border border-gray-600">
+                    <div class="flex-grow flex flex-col">
+                        <span class="font-medium">${item.qty} x ${item.menu_name}</span>
+                        <small class="text-red-400 cursor-pointer hover:underline" onclick="removeFromCart(${index})">Remove</small>
+                    </div>
+                    <span class="font-bold">P ${itemTotal.toFixed(2)}</span>
+                `;
+                container.appendChild(row);
+            });
+
+            totalEl.innerText = 'P ' + total.toFixed(2);
+        }
+        
+
+        // --- SUBMIT ORDER ---
+        function submitOrder() {
+            if (cart.length === 0) {
+                alert("Cart is empty!");
+                return;
+            }
+
+            const payload = {
+                table: "Table 01",
+                items: cart,
+                total: document.getElementById('total-price').innerText
+            };
+
+            fetch('/process_order', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        alert("Order placed! Transaction ID: " + data.transaction_id);
+                        clearCart();
+                    }
+                })
+                .catch(err => console.error(err));
+        }
+
+        // --- UTILS ---
+        function updateDate() {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString() + ' | ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('current-date').innerText = dateStr;
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>POS - Table Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        bgMain: '#000000',
+                        bgPanel: '#18181b',
+                        bgInput: '#27272a',
+                        accentPurple: '#7c3aed',
+                        accentDark: '#5b21b6',
+                        textGray: '#a1a1aa',
+                        statusRed: '#dc2626',
+                        statusOrange: '#ea580c',
+                        statusGray: '#52525b',
+                        statusGreen: '#16a34a',
+                        modalHeader: '#6d28d9',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .active-press:active {
+            transform: scale(0.95);
+            transition: transform 0.05s;
+        }
+
+        /* Figma Chair Styling */
+        .chair {
+            position: absolute;
+            width: 14px;
+            height: 38px;
+            border-width: 2px;
+            border-radius: 999px;
+            background-color: transparent;
+        }
+
+        /* Positioning Logic */
+        .chair-left {
+            left: -20px;
+        }
+
+        .chair-right {
+            right: -20px;
+        }
+
+        .pos-1 {
+            top: 20px;
+        }
+
+        .pos-2 {
+            bottom: 20px;
+        }
+
+        /* VIP Chair adjustments if needed */
+        .pos-mid {
+            top: 50%;
+            transform: translateY(-50%);
+        }
+    </style>
+</head>
+
+<body class="bg-[#0f1115] text-gray-200 font-sans p-4 min-h-screen flex flex-col">
+
+    <header
+        class="h-16 flex-none flex items-center justify-between px-6 border-b border-gray-700 bg-[#1e2128] rounded-xl mb-6">
+
+       <div class="flex items-center gap-6">
+            <div class="flex flex-col">
+                <h1 class="text-lg font-bold text-gray-200 tracking-tight leading-none">Table Management</h1>
+                <span class="text-[10px] text-textGray font-mono mt-1" id="header-date">02/16/2026 | 02:45 PM</span>
+            </div>
+
+            <div class="h-8 w-px bg-gray-800"></div>
+
+            <div class="relative group">
+                <select id="deckSelect" class="appearance-none bg-bgPanel border border-gray-700 text-white py-2 pl-4 pr-10 rounded-lg text-sm font-bold focus:outline-none focus:border-accentPurple hover:border-gray-500 transition-colors cursor-pointer shadow-lg">
+                    <option value="skydeck">Sky Deck</option>
+                    <option value="maindeck">Main Deck</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-textGray group-hover:text-white transition-colors">
+                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex bg-bgPanel rounded-lg p-1 space-x-1 border border-gray-800">
+            <div onclick="window.location.href='../mainland/tablemanagement'"
+                class="bg-accentPurple text-white px-6 py-1.5 rounded text-sm font-bold shadow-lg flex items-center gap-2">
+                Table Management
+            </div>
+            <div onclick="window.location.href='../mainland/recreationalactivity'"
+                class="px-6 py-1.5 rounded text-textGray text-sm font-medium hover:bg-white/5 cursor-pointer flex items-center gap-2 transition-colors">
+                Recreational Activities
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-3 bg-[#0f1115] px-3 py-1.5 rounded-full border border-gray-700">
+            <div class="w-8 h-8 rounded-full bg-yellow-600 overflow-hidden">
+                <img src="../static/images/error.jpeg" class="w-full h-full object-cover"
+                    onerror="this.src='https://i.pravatar.cc/150?img=12'">
+            </div>
+            <div onclick="openLogoutModal()" class="cursor-pointer flex flex-col pr-2">
+                <span class="text-xs font-bold text-white">Anthony Beltran</span>
+                <span class="text-[10px] text-gray-400">Employee 1</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 relative overflow-hidden flex flex-col">
+        <div class="flex justify-end px-8 py-4 space-x-6 text-xs font-medium text-gray-400">
+            <div class="flex items-center gap-2"><span
+                    class="w-2 h-2 rounded-full bg-statusGray shadow-[0_0_8px_rgba(82,82,91,0.5)]"></span> Available
+            </div>
+            <div class="flex items-center gap-2"><span
+                    class="w-2 h-2 rounded-full bg-statusOrange shadow-[0_0_8px_rgba(234,88,12,0.5)]"></span> Reserved
+            </div>
+            <div class="flex items-center gap-2"><span
+                    class="w-2 h-2 rounded-full bg-accentPurple shadow-[0_0_8px_rgba(220,38,38,0.5)]"></span> Occupied
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto no-scrollbar p-6">
+            {% set selected_deck = selected_deck or 'skydeck' %} {# pass selected_deck from backend #}
+            <div class="grid grid-cols-5 gap-y-8 gap-x-10 max-w-6xl mx-auto pb-20 px-8">
+                
+                {% for table in tables %}
+                    {# Determine border color based on status #}
+                    {% if table.status == 'Available' %}
+                        {% set border_color = 'border-statusGray' %}
+                    {% elif table.status == 'Pending' %}
+                        {% set border_color = 'border-accentPurple' %}
+                    {% else %}
+                        {% set border_color = 'border-statusOrange' %}
+                    {% endif %}
+
+                    {# Multiplier based on deck #}
+                    {% if table.location == 'skydeck' %}
+                        {% set multiplier = 3500 %}
+                    {% elif table.location == 'maindeck' %}
+                        {% set multiplier = 2500 %}
+                    {% else %}
+                        {% set multiplier = 3000 %}
+                    {% endif %}
+
+                <div onclick="openModal('{{ table.tableID }}')"
+                    class="table-card flex flex-col justify-around py-2 active-press relative w-full aspect-[3/4] max-w-[150px] border-2 {{ border_color }} rounded-2xl items-center justify-center bg-bgPanel hover:bg-white/5 cursor-pointer mx-auto group shadow-[0_0_15px_rgba(220,38,38,0.1)]"
+                    data-card="{{ table.location }}"
+                    style="display: {% if table.location == selected_deck %}flex{% else %}none{% endif %};">
+
+                    <div class="chair chair-left pos-1 {{ border_color }}"></div>
+                    <div class="chair chair-left pos-2 {{ border_color }}"></div>
+                    <div class="chair chair-right pos-1 {{ border_color }}"></div>
+                    <div class="chair chair-right pos-2 {{ border_color }}"></div>
+
+                    {% if table.transaction_id %}
+                        <p class="text-[12px]">{{ table.transaction_id }}</p>
+                    {% endif %}
+
+                    <div class="w-16 h-16 {% if 'VIP' in table.tableName %} w-20 h-20 text-xl {% else %} text-2xl {% endif %} bg-white rounded-full flex items-center justify-center text-black font-bold group-hover:scale-110 transition-transform">
+                        {{ table.tableName }}
+                    </div>
+
+                    {% if table.transaction_id %}
+                        {% set total_consumable = table.capacity * multiplier %}
+                        <div class="flex flex-col gap-1 text-center">
+                            <p class="text-[12px] text-statusGreen">Total: Php{{ '{:,.2f}'.format(total_consumable) }}</p>
+                            {% set remaining = total_consumable - table.totalnetbilling %}
+                            <p class="text-[10px] text-statusRed">Remaining: Php{{ '{:,.2f}'.format(remaining) }}</p>
+                        </div>
+                    {% endif %}
+
+                </div>
+
+                {% endfor %}
+            </div>
+            
+
+        </div>
+    </main>
+
+    <div id="modalOverlay"
+        class="fixed inset-0 bg-black/90 backdrop-blur-md z-40 hidden flex items-center justify-center p-4">
+        
+        <div
+            class="bg-bgPanel w-full max-w-6xl h-[90vh] rounded-3xl shadow-2xl flex border border-gray-800 overflow-hidden">
+
+            <div class="w-2/5 border-r border-gray-800 p-6 flex flex-col h-full bg-[#1c1c1f]">
+                <div class="flex-none mb-6">
+                    <h2 class="text-xl font-bold text-white mb-1" id="modalTableId">Table 01 Specification</h2>
+                    <p class="text-xs text-textGray">Configure guests and seating.</p>
+                </div>
+
+                <div class="flex bg-black p-1 rounded-xl mb-6 flex-none border border-gray-800">
+                    <button
+                        class="flex-1 py-3 bg-bgPanel border border-accentPurple text-accentPurple rounded-lg text-sm font-bold shadow-sm" id="modalDeckSelected">Sky
+                        Deck</button>
+                    
+                </div>
+
+                <div class="flex-1 overflow-y-auto no-scrollbar space-y-4 pr-2">
+                    <div class="group">
+                        <label
+                            class="text-[10px] uppercase text-textGray font-bold tracking-wider mb-1 block group-focus-within:text-accentPurple transition-colors">Primary
+                            Guest</label>
+                        <input type="text" value="Ava Sinclair"
+                            id = "mainGuest"
+                            class="w-full bg-bgInput border border-gray-700 rounded-lg p-3 text-sm focus:border-accentPurple focus:outline-none text-white transition-colors">
+                    </div>
+                    <div class="group">
+                        <label
+                            class="text-[10px] uppercase text-textGray font-bold tracking-wider mb-1 block group-focus-within:text-accentPurple transition-colors">Contact</label>
+                        <input type="tel" value="+1 923 045 9221" 
+                            id="mainGuestcontact"
+                            class="w-full bg-bgInput border border-gray-700 rounded-lg p-3 text-sm focus:border-accentPurple focus:outline-none text-white transition-colors">
+                    </div>
+                    <div class="group">
+                        <label
+                            class="text-[10px] uppercase text-textGray font-bold tracking-wider mb-1 block group-focus-within:text-accentPurple transition-colors">Additional
+                            Guests</label>
+                        <div class="space-y-2" id="modalAddGuest">
+                            
+                           
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-4 border-t border-gray-800 flex-none">
+                    <button
+                        class="w-full bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-xl font-bold text-sm active-press transition-colors shadow-lg">SAVE
+                        DETAILS</button>
+                </div>
+            </div>
+
+            <div class="w-3/5 bg-black p-6 flex flex-col h-full relative">
+
+                <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-800 flex-none">
+                    <div>
+                        <h3 class="text-lg font-bold" id="modalTransactionID">Order #T1-89</h3>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        
+                        <button onclick="closeModal()"
+                            class="w-8 h-8 rounded-full bg-gray-800 hover:bg-gray-700 flex items-center justify-center text-white active-press transition-colors">✕</button>
+                    </div>
+                </div>
+
+                <div class="flex-1 overflow-y-auto no-scrollbar mb-4 space-y-2 pr-1" id="orderList">
+                    <div class="bg-bgPanel p-3 rounded-lg flex justify-between items-center border border-gray-800">
+                        <div>
+                            <div class="font-medium text-white">Sky Deck Fee</div>
+                            <div class="text-xs text-textGray">Qty: 5</div>
+                        </div>
+                        <div class="font-bold text-green-400">P 15,000.00</div>
+                    </div>
+                </div>
+
+                <div class="flex-none bg-bgPanel rounded-2xl p-4 border border-gray-800">
+                    <div class="flex justify-between items-end mb-4">
+                        <div class="flex flex-col">
+                            <span class="text-xs text-textGray font-bold uppercase">Total Due</span>
+                            <span class="text-2xl font-bold text-white tracking-tight" id="totalDisplay">P
+                                15,000.00</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs text-textGray font-bold uppercase">Amount Paid</span>
+                            <div class="text-2xl font-mono text-accentPurple font-bold" id="numpadInput">0</div>
+                        </div>
+                    </div>
+
+                    <div class="flex space-x-2 mb-4">
+                        <button
+                            class="flex-1 py-2 bg-accentPurple text-white text-xs font-bold rounded hover:bg-accentDark border border-accentPurple transition-colors shadow-[0_0_10px_rgba(124,58,237,0.3)]">CASH</button>
+                        <button
+                            class="flex-1 py-2 bg-gray-800 text-gray-400 text-xs font-bold rounded hover:bg-gray-700 border border-gray-700 transition-colors">CARD</button>
+                        <button
+                            class="flex-1 py-2 bg-gray-800 text-gray-400 text-xs font-bold rounded hover:bg-gray-700 border border-gray-700 transition-colors">OTHER</button>
+                    </div>
+
+                    <div class="grid grid-cols-4 gap-2 h-48">
+                        <button
+                            class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors"
+                            onclick="numClick('1')">1</button>
+                        <button
+                            class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors"
+                            onclick="numClick('2')">2</button>
+                        <button
+                            class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors"
+                            onclick="numClick('3')">3</button>
+                        <button
+                            class="active-press bg-gray-700/50 rounded text-xs font-bold text-gray-300 hover:bg-gray-600 transition-colors border border-gray-700"
+                            onclick="quickAdd(1000)">+1,000</button>
+
+                        <button
+                            class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors"
+                            onclick="numClick('4')">4</button>
+                        <button
+                            class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors"
+                            onclick="numClick('5')">5</button>
+                        <button
+                            class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors"
+                            onclick="numClick('6')">6</button>
+                        <button
+                            class="active-press bg-gray-700/50 rounded text-xs font-bold text-gray-300 hover:bg-gray-600 transition-colors border border-gray-700"
+                            onclick="quickAdd(5000)">+5,000</button>
+
+                        <button
+                            class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors"
+                            onclick="numClick('7')">7</button>
+                        <button
+                            class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors"
+                            onclick="numClick('8')">8</button>
+                        <button
+                            class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors"
+                            onclick="numClick('9')">9</button>
+                        <button
+                            class="active-press bg-gray-700/50 rounded text-xs font-bold text-gray-300 hover:bg-gray-600 transition-colors border border-gray-700"
+                            onclick="quickAdd(10000)">+10,000</button>
+
+                        <button
+                            class="active-press bg-accentPurple/10 text-accentPurple rounded text-lg font-bold hover:bg-accentPurple/20 border border-accentPurple/30 transition-colors"
+                            onclick="numClear()">C</button>
+                        <button
+                            class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors"
+                            onclick="numClick('0')">0</button>
+                        <button
+                            class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors"
+                            onclick="numClick('00')">00</button>
+
+                        <button
+                            class="active-press bg-statusGreen text-white rounded font-bold text-xl hover:bg-green-600 flex items-center justify-center shadow-[0_0_15px_rgba(22,163,74,0.3)] transition-all"
+                            onclick="showConfirmation()">PAY</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="errorModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
+        <div class="bg-bgPanel w-full max-w-sm rounded-lg shadow-2xl overflow-hidden relative border border-gray-700 transform transition-all scale-100">
+            <div class="p-6 flex flex-col items-center text-center">
+                <div class="w-14 h-14 bg-red-500/10 rounded-full flex items-center justify-center mb-4 border border-red-500/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">Insufficient Payment</h3>
+                <p class="text-sm text-gray-400 mb-6">The amount tendered is less than the total due. Please enter a valid amount.</p>
+                <button onclick="closeErrorModal()" class="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-semibold text-sm transition shadow-lg">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirmModal"
+        class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-bgPanel w-full max-w-md rounded-lg shadow-2xl overflow-hidden relative border border-gray-700">
+
+            <button onclick="hideConfirmation()"
+                class="absolute top-4 right-4 text-white/70 hover:text-white z-10 p-2 rounded-full hover:bg-white/10 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <div class="h-16 bg-modalHeader w-full"></div>
+
+            <div class="px-8 pb-8 pt-6 relative">
+
+                <h2 class="text-xl font-semibold text-center mb-6">Confirm Customer Order</h2>
+
+                <div class="space-y-4 text-sm border-b border-gray-700 pb-6 mb-6">
+                    <div id="confirmItemsList" class="space-y-4">
+                        </div>
+                </div>
+
+                <div class="space-y-3 mb-6 text-sm">
+                    <div class="text-gray-300">Mode: Cash</div>
+                    <div class="text-gray-300">Customer Name / ID | Table 01</div>
+                    <div class="text-gray-300 border-b border-gray-700 pb-3 mb-2">02/16/2026 | 02:45 PM</div>
+
+                    <div class="flex justify-between items-end">
+                        <span class="text-gray-400">Total Amount</span>
+                        <span class="text-lg font-semibold text-white" id="confirmTotal">P 0.00</span>
+                    </div>
+                    <div class="flex justify-between items-end">
+                        <span class="text-gray-400">Cash Tendered</span>
+                        <span class="text-lg font-semibold text-white" id="confirmTendered">P 0.00</span>
+                    </div>
+                    <div class="flex justify-between items-end mt-2 pt-2 border-t border-gray-700">
+                        <span class="text-gray-400 font-bold">CHANGE</span>
+                        <span class="text-2xl font-bold text-green-400" id="confirmChange">P 0.00</span>
+                    </div>
+                </div>
+
+                <button onclick="finalizeTransaction()"
+                    class="w-full bg-gradient-to-r from-accentPurple to-accentDark hover:from-accentDark hover:to-accentPurple text-white py-3 rounded-lg font-medium shadow-lg active-press transition-all flex items-center justify-center border border-white/10">
+                    Confirm Order
+                </button>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="successModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
+        <div class="bg-bgPanel w-full max-w-sm rounded-lg shadow-2xl overflow-hidden relative border border-gray-700 transform transition-all scale-100">
+            <div class="p-6 flex flex-col items-center text-center">
+                <div class="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mb-4 border border-green-500/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">Order Confirmed!</h3>
+                <p class="text-sm text-gray-400 mb-2">Transaction ID</p>
+                <div class="bg-black/50 px-4 py-2 rounded border border-gray-700 mb-6 font-mono text-lg text-accentPurple font-bold tracking-wider" id="transactionIdDisplay">
+                    #TBL-83921
+                </div>
+                <button onclick="closeSuccessModal()" class="w-full bg-[#2a2d35] hover:bg-[#353942] text-white py-3 rounded-lg font-semibold text-sm transition border border-gray-600">
+                    Close & New Order
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="logoutModal"
+        class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
+        <div class="bg-[#1e2128] w-full max-w-sm rounded-lg shadow-2xl overflow-hidden relative border border-gray-700">
+
+            <div class="h-2 bg-[#6d28d9] w-full"></div>
+
+            <button onclick="closeLogoutModal()"
+                class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="p-8 flex flex-col items-center text-center">
+
+                <div
+                    class="w-16 h-16 bg-[#2a2d35] rounded-full flex items-center justify-center mb-4 border border-gray-700">
+                    <i class="fa-solid fa-power-off text-2xl text-red-500"></i>
+                </div>
+
+                <h2 class="text-xl font-bold text-white mb-2">Log Out?</h2>
+                <p class="text-sm text-gray-400 mb-8">Are you sure you want to end your session? Any unsaved orders
+                    might be lost.</p>
+
+                <div class="grid grid-cols-2 gap-3 w-full">
+                    <button onclick="closeLogoutModal()"
+                        class="bg-[#2a2d35] hover:bg-[#353942] text-gray-300 py-3 rounded-lg font-semibold text-sm transition border border-gray-700">
+                        Cancel
+                    </button>
+                    <button onclick="confirmLogout()"
+                        class="bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-semibold text-sm transition shadow-lg shadow-red-900/20">
+                        Log Out
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- LOGOUT LOGIC ---
+        function openLogoutModal() {
+            document.getElementById('logoutModal').classList.remove('hidden');
+        }
+
+        function closeLogoutModal() {
+            document.getElementById('logoutModal').classList.add('hidden');
+        }
+
+        function confirmLogout() {
+            window.location.href = "/";
+        }
+
+        document.getElementById('logoutModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('logoutModal')) {
+                closeLogoutModal();
+            }
+        });
+
+        // --- DOM ELEMENTS ---
+        const modal = document.getElementById('modalOverlay');
+        const confirmModal = document.getElementById('confirmModal');
+        const errorModal = document.getElementById('errorModal');
+        const successModal = document.getElementById('successModal');
+        
+        const modalTableId = document.getElementById('modalTableId');
+        const numpadInput = document.getElementById('numpadInput');
+
+        const orderList = document.getElementById('orderList');
+        const totalDisplay = document.getElementById('totalDisplay');
+
+        const confirmTotal = document.getElementById('confirmTotal');
+        const confirmTendered = document.getElementById('confirmTendered');
+        const confirmChange = document.getElementById('confirmChange');
+        const confirmItemsList = document.getElementById('confirmItemsList');
+
+        let currentInput = '';
+        let currentTotal = 15000;
+
+        // Default item for reset
+        const defaultItemsHTML = `
+             <div class="bg-bgPanel p-3 rounded-lg flex justify-between items-center border border-gray-800">
+                <div>
+                    <div class="font-medium text-white">Sky Deck Fee</div>
+                    <div class="text-xs text-textGray">Qty: 5</div>
+                </div>
+                <div class="font-bold text-green-400">P 15,000.00</div>
+            </div>
+            
+            
+        `;
+
+        const confirmDefaultHTML = `
+            <div class="flex justify-between items-start">
+                <div class="flex gap-4"><span class="text-gray-400 w-6 text-right">x5</span><span>Sky Deck Fee</span></div>
+                <span class="font-medium">P 15,000.00</span>
+            </div>
+        `;
+
+        // --- MAIN FUNCTIONS ---
+
+        function openModal(id) {
+            
+            
+            const tableData = {{ tables | tojson }};
+
+            
+
+            var tableDataSelected = null;
+            for (let i=0; i<tableData.length; i++){
+                if (tableData[i].tableID === parseInt(id)){
+                    console.log(tableData[i]);
+                    tableDataSelected = tableData[i];
+                    break;
+                }
+
+                
+            }
+            const deck_prices1 = {{ deck_prices | tojson }};
+            const multiplier = deck_prices1[tableDataSelected.location];
+            // modalTableId.innerText = id === 'VIP' ? 'VIP Table | Spec' : `Table ${id} | Spec`;
+
+            document.getElementById("modalTableId").innerText = `${tableDataSelected.tableName} Specification`;
+
+            document.getElementById("modalDeckSelected").innerText = tableDataSelected.location.toUpperCase();
+            document.getElementById("mainGuest").value = tableDataSelected.customer_name;
+            document.getElementById("mainGuestcontact").value = tableDataSelected.contact_number;
+
+            document.getElementById("modalTransactionID").innerText = `Order No: ${tableDataSelected.transaction_id}`
+
+            document.getElementById("modalAddGuest").innerHTML = "";
+
+            const remaining = tableDataSelected.capacity * multiplier;
+
+            for (let j=0; j<tableDataSelected.capacity-1; j++){
+                document.getElementById("modalAddGuest").innerHTML +=`<input type="text" value="${tableDataSelected.add_on_guest[j].name}"
+                                class="w-full bg-bgInput border border-gray-700 rounded-lg p-3 text-sm focus:border-accentPurple focus:outline-none text-white transition-colors">`
+            }
+
+
+            orderList.innerHTML = `<div class="bg-bgPanel p-3 rounded-lg flex justify-between items-center border border-gray-800">
+                <div>
+                    <div class="font-medium text-white">${tableDataSelected.location.toUpperCase()} FEE </div>
+                    <div class="text-xs text-textGray">Qty: ${tableDataSelected.capacity}</div>
+                </div>
+                <div class="font-bold text-green-400">P ${remaining.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+            </div>`;
+            var total_billing = remaining;
+            for (let k =0; k<tableDataSelected.services_availed.length; k++){
+
+                const total_price = tableDataSelected.services_availed[k]['unit_price']*tableDataSelected.services_availed[k]['qty'];
+                total_billing += total_price;
+                orderList.innerHTML += `<div class="bg-bgPanel p-3 rounded-lg flex justify-between items-center border border-gray-800">
+                <div>
+                    <div class="font-medium text-white">${tableDataSelected.services_availed[k]['service']}  </div>
+                    <div class="text-xs text-textGray">Qty: ${tableDataSelected.services_availed[k]['qty']}</div>
+                </div>
+                <div class="font-bold text-green-400">P ${total_price.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+            </div>`;
+            }
+
+            document.getElementById("totalDisplay").innerText = `P ${total_billing.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+            
+            modal.classList.remove('hidden');
+            // resetToDefaultState();
+            updateNumpad();
+        }
+
+        function resetToDefaultState() {
+            currentInput = '';
+            currentTotal = 15000;
+            totalDisplay.innerText = 'P 15,000.00';
+            orderList.innerHTML = defaultItemsHTML;
+            confirmItemsList.innerHTML = confirmDefaultHTML;
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+        }
+
+        // --- CONFIRMATION & PAYMENT LOGIC ---
+
+        function showConfirmation() {
+            if (currentTotal === 0) {
+                alert("Order is empty.");
+                return;
+            }
+
+            const tendered = currentInput === '' ? 0 : parseFloat(currentInput);
+            
+            // ERROR CHECK: Tendered < Total
+            if (tendered < currentTotal) {
+                errorModal.classList.remove('hidden');
+                return;
+            }
+
+            const change = tendered - currentTotal;
+
+            confirmTotal.innerText = 'P ' + currentTotal.toLocaleString('en-US', { minimumFractionDigits: 2 });
+            confirmTendered.innerText = 'P ' + tendered.toLocaleString('en-US', { minimumFractionDigits: 2 });
+            confirmChange.innerText = 'P ' + (change > 0 ? change : 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
+
+            confirmModal.classList.remove('hidden');
+        }
+
+        function hideConfirmation() {
+            confirmModal.classList.add('hidden');
+        }
+
+        function closeErrorModal() {
+            errorModal.classList.add('hidden');
+        }
+
+        // --- TRANSACTION SUCCESS LOGIC ---
+        function finalizeTransaction() {
+            hideConfirmation();
+            
+            // Generate Random Transaction ID
+            const randomId = Math.floor(10000 + Math.random() * 90000);
+            document.getElementById('transactionIdDisplay').innerText = "#TBL-" + randomId;
+
+            successModal.classList.remove('hidden');
+        }
+
+        function closeSuccessModal() {
+            successModal.classList.add('hidden');
+            closeModal(); // Close main modal
+            resetToDefaultState(); // Reset data
+        }
+
+        // --- NUMPAD & ORDER MANIPULATION ---
+
+        function clearOrder() {
+            orderList.innerHTML = `
+                <div class="h-full flex flex-col items-center justify-center text-gray-500 italic mt-8">
+                    <span>Order Cleared</span>
+                </div>`;
+
+            confirmItemsList.innerHTML = '<div class="text-center text-gray-500 italic">No Items</div>';
+
+            currentTotal = 0;
+            totalDisplay.innerText = "P 0.00";
+
+            currentInput = "";
+            updateNumpad();
+        }
+
+        function numClick(val) {
+            if (currentInput.length < 10) {
+                // Prevent multiple leading zeros
+                if (currentInput === '0' && val !== '0' && val !== '00') {
+                    currentInput = val;
+                } else {
+                    currentInput += val;
+                }
+                updateNumpad();
+            }
+        }
+
+        function numClear() {
+            currentInput = '';
+            updateNumpad();
+        }
+
+        function quickAdd(val) {
+            let currentVal = currentInput === '' ? 0 : parseFloat(currentInput);
+            let newVal = currentVal + val;
+            currentInput = newVal.toString();
+            updateNumpad();
+        }
+
+        function updateNumpad() {
+            if (currentInput === '') {
+                numpadInput.innerText = '0';
+            } else {
+                let num = parseFloat(currentInput);
+                numpadInput.innerText = num.toLocaleString('en-US');
+            }
+        }
+
+        // --- EVENT LISTENERS ---
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        confirmModal.addEventListener('click', (e) => {
+            if (e.target === confirmModal) hideConfirmation();
+        });
+        
+        // Optional: Close error modal on background click
+        errorModal.addEventListener('click', (e) => {
+            if (e.target === errorModal) closeErrorModal();
+        });
+    </script>
+    <script>
+        // --- UTILS ---
+        function updateDate() {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString() + ' | ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('header-date').innerText = dateStr;
+        }
+        updateDate();
+    </script>
+
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+    const deckSelect = document.getElementById('deckSelect');
+    
+
+    // No need for initial filter: already handled by inline style
+
+    // Update tables when deck changes
+    deckSelect.addEventListener('change', (e) => {
+        var selectedDeck = e.target.value;
+        const tableCards = document.querySelectorAll('.table-card');
+        
+        tableCards.forEach(card => {
+            if (card.dataset.card === selectedDeck) {
+                card.style.display = 'flex';
+               
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+});
+</script>
+</body>
+
+</html>

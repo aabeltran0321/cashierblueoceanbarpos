@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>POS - Recreational Activities</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        bgMain: '#000000',     
+                        bgPanel: '#18181b',    
+                        bgInput: '#27272a',
+                        accentPurple: '#7c3aed',
+                        accentDark: '#5b21b6',
+                        textGray: '#a1a1aa',
+                        statusRed: '#dc2626',
+                        statusOrange: '#ea580c',
+                        statusGray: '#52525b',
+                        statusGreen: '#16a34a',
+                        modalHeader: '#6d28d9',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .active-press:active { transform: scale(0.95); transition: transform 0.05s; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .new-input { animation: fadeIn 0.2s ease-out forwards; }
+    </style>
+</head>
+<body class="bg-[#0f1115] text-gray-200 font-sans p-4 min-h-screen flex flex-col">
+
+    <header
+        class="h-16 flex-none flex items-center justify-between px-6 border-b border-gray-700 bg-[#1e2128] rounded-xl mb-6">
+        
+        <div class="flex items-center gap-6">
+            <div class="flex flex-col">
+                <h1 class="text-lg font-bold text-gray-200 tracking-tight leading-none">Recreational Activities</h1>
+                <span class="text-[10px] text-textGray font-mono mt-1" id="header-date">02/16/2026 | 02:45 PM</span>
+            </div>
+        </div>
+        
+        <div class="flex bg-bgPanel rounded-lg p-1 space-x-1 border border-gray-800">
+            <div onclick="window.location.href='../mainland/tablemanagement'"  class="px-6 py-1.5 rounded text-textGray text-sm font-medium hover:bg-white/5 cursor-pointer flex items-center gap-2 transition-colors">
+                Tables Management
+            </div>
+            <div onclick="window.location.href='../mainland/recreationalactivity'" class="bg-accentPurple text-white px-6 py-1.5 rounded text-sm font-bold shadow-lg flex items-center gap-2">
+                Recreation Activities
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-3 bg-bgPanel px-3 py-1.5 rounded-full border border-gray-800 hover:border-gray-600 transition-colors cursor-pointer">
+            <div class="w-8 h-8 rounded-full bg-yellow-600 overflow-hidden ring-2 ring-gray-800">
+                <img src="../static/images/error.jpeg" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/150'">
+            </div>
+            <div class="flex flex-col pr-2">
+                <span class="text-xs font-bold text-white">Anthony Beltran</span>
+                <span class="text-[10px] text-textGray">Employee 1</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 relative overflow-hidden flex flex-col">
+        <div class="flex justify-between items-center px-8 py-4">
+            <div class="flex items-center space-x-6 text-xs font-medium text-gray-400">  
+                <select id="ActivityFilter" class="appearance-none bg-bgPanel border border-gray-700 text-white py-1.5 pl-4 pr-10 rounded-lg text-sm font-bold focus:outline-none focus:border-accentPurple hover:border-gray-500 transition-colors cursor-pointer shadow-lg">
+                    <option value="">All</option>
+                    <option value="ongoing">Ongoing</option>
+                    <option value="done">Done</option>
+                </select>          
+                <button onclick="openModal('New Activity')" class="ml-4 flex items-center gap-2 bg-accentPurple/10 hover:bg-accentPurple/20 text-accentPurple border border-accentPurple/50 px-4 py-2 rounded-lg transition-colors active-press">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add
+                </button>
+            </div>
+
+            <div class="flex justify-end px-8 py-4 space-x-6 text-xs font-medium text-gray-400">
+            <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-statusOrange shadow-[0_0_8px_rgba(82,82,91,0.5)]"></span> Done</div>
+            <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#7c3aed] shadow-[0_0_8px_rgba(220,38,38,0.5)]"></span> Occupied</div>
+        </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto no-scrollbar px-8 pb-20">
+            <div class="mb-8">
+                <div class="grid grid-cols-8 gap-4">
+                    <div onclick="openModal('01')" class="flex flex-col justify-between p-2 active-press aspect-square border-2 border-accentPurple rounded-lg bg-bgPanel flex items-center justify-center cursor-pointer hover:bg-white/5 group">
+                        <p class="text-[10px]">TX-JSBDKSSV20</p>
+                        <span class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-black font-bold text-sm group-hover:scale-110 transition-transform">01</span>
+                        <div class="flex flex-col gap-1 text-center">
+                        <p class="text-[10px] text-statusGreen">Total: Php2,500</p>
+                        <p class="text-[8px] text-statusRed"> Remaining: Php2,500</p>
+                    </div>
+                    <div onclick="openModal('02')" class="flex flex-col justify-between p-2 active-press aspect-square border-2 border-accentPurple rounded-lg bg-bgPanel flex items-center justify-center cursor-pointer hover:bg-white/5 group">
+                        <p class="text-[10px]">TX-JSBDKSSV20</p>
+                        <span class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-black font-bold text-sm group-hover:scale-110 transition-transform">01</span>
+                        <div class="flex flex-col gap-1 text-center">
+                        <p class="text-[10px] text-statusGreen">Total: Php2,500</p>
+                        <p class="text-[8px] text-statusRed"> Remaining: Php2,500</p>
+                    </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="modalOverlay" class="fixed inset-0 bg-black/90 backdrop-blur-md z-40 hidden flex items-center justify-center p-4">
+        <div class="bg-bgPanel w-full max-w-6xl h-[90vh] rounded-3xl shadow-2xl flex border border-gray-800 overflow-hidden">
+            
+            <div class="w-2/5 border-r border-gray-800 p-6 flex flex-col h-full bg-[#1c1c1f]">
+                <div class="flex-none mb-6">
+                    <h2 class="text-xl font-bold text-white mb-1" id="modalTitle">Activity Specification</h2>
+                    <p class="text-xs text-textGray">Configure participants and details.</p>
+                </div>
+
+                <div class="flex-1 overflow-y-auto no-scrollbar space-y-4 pr-2">
+                    <div class="group">
+                        <label class="text-[10px] uppercase text-textGray font-bold tracking-wider mb-1 block group-focus-within:text-accentPurple transition-colors">Category #1</label>
+                        <input type="text" value="table 01" class="w-full bg-bgInput border border-gray-700 rounded-lg p-3 text-sm focus:border-accentPurple focus:outline-none text-white transition-colors">
+                    </div>
+                    
+                    <hr class="border-gray-800">
+
+                    <div class="group">
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="text-[10px] uppercase text-textGray font-bold tracking-wider block group-focus-within:text-accentPurple transition-colors">Guest</label>
+                            <button onclick="addGuestInput()" class="text-[10px] font-bold text-accentPurple hover:text-white uppercase tracking-wider flex items-center gap-1 transition-colors px-2 py-1 rounded hover:bg-white/5">
+                                <span class="text-lg leading-none">+</span> Add Guest
+                            </button>
+                        </div>
+
+                        <div class="space-y-2" id="guestList">
+                            <div class="flex items-center gap-2 guest-row">
+                                <input type="text" value="Chloe Sinclair" class="flex-1 bg-bgInput border border-gray-700 rounded-lg p-3 text-sm focus:border-accentPurple focus:outline-none text-white transition-colors">
+                                <button onclick="removeGuest(this)" class="p-3 rounded-lg bg-gray-800 text-gray-400 border border-gray-700 hover:border-red-500/50 hover:bg-red-500/10 hover:text-red-500 transition-all active:scale-95">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-4 border-t border-gray-800 flex-none">
+                    <button class="w-full bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-xl font-bold text-sm active-press transition-colors shadow-lg">SAVE DETAILS</button>
+                </div>
+            </div>
+
+            <div class="w-3/5 bg-black p-6 flex flex-col h-full relative">
+                
+                <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-800 flex-none">
+                    <div>
+                        <h3 class="text-lg font-bold">Transaction #A-89</h3>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button onclick="clearOrder()" class="text-blue-400 text-xs font-bold hover:text-blue-300 px-3 py-2 rounded bg-blue-900/20 hover:bg-blue-900/30 active-press transition-colors">CLEAR</button>
+                        <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-gray-800 hover:bg-gray-700 flex items-center justify-center text-white active-press transition-colors">✕</button>
+                    </div>
+                </div>
+
+                <div class="flex-1 overflow-y-auto no-scrollbar mb-4 space-y-2 pr-1" id="orderList">
+                    <div class="bg-bgPanel p-3 rounded-lg flex justify-between items-center border border-gray-800">
+                        <div>
+                            <div class="font-medium text-white">Recreational Activity</div>
+                            <div class="text-xs text-textGray">Category 01 - Activity 01 | Qty: 1</div>
+                        </div>
+                        <div class="font-bold text-green-400">P 5,000.00</div>
+                    </div>
+                </div>
+
+                <div class="flex-none bg-bgPanel rounded-2xl p-4 border border-gray-800">
+                    <div class="flex justify-between items-end mb-4">
+                        <div class="flex flex-col">
+                            <span class="text-xs text-textGray font-bold uppercase">Total Due</span>
+                            <span class="text-2xl font-bold text-white tracking-tight" id="totalDisplay">P 5,000.00</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs text-textGray font-bold uppercase">Amount Paid</span>
+                            <div class="text-2xl font-mono text-accentPurple font-bold" id="numpadInput">0</div>
+                        </div>
+                    </div>
+
+                    <div class="flex space-x-2 mb-4">
+                        <button class="flex-1 py-2 bg-accentPurple text-white text-xs font-bold rounded hover:bg-accentDark border border-accentPurple transition-colors shadow-[0_0_10px_rgba(124,58,237,0.3)]">CASH</button>
+                        <button class="flex-1 py-2 bg-gray-800 text-gray-400 text-xs font-bold rounded hover:bg-gray-700 border border-gray-700 transition-colors">CARD</button>
+                        <button class="flex-1 py-2 bg-gray-800 text-gray-400 text-xs font-bold rounded hover:bg-gray-700 border border-gray-700 transition-colors">OTHER</button>
+                    </div>
+
+                    <div class="grid grid-cols-4 gap-2 h-48">
+                        <button class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors" onclick="numClick('1')">1</button>
+                        <button class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors" onclick="numClick('2')">2</button>
+                        <button class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors" onclick="numClick('3')">3</button>
+                        <button class="active-press bg-gray-700/50 rounded text-xs font-bold text-gray-300 hover:bg-gray-600 transition-colors border border-gray-700" onclick="quickAdd(1000)">+1,000</button>
+
+                        <button class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors" onclick="numClick('4')">4</button>
+                        <button class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors" onclick="numClick('5')">5</button>
+                        <button class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors" onclick="numClick('6')">6</button>
+                        <button class="active-press bg-gray-700/50 rounded text-xs font-bold text-gray-300 hover:bg-gray-600 transition-colors border border-gray-700" onclick="quickAdd(5000)">+5,000</button>
+
+                        <button class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors" onclick="numClick('7')">7</button>
+                        <button class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors" onclick="numClick('8')">8</button>
+                        <button class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors" onclick="numClick('9')">9</button>
+                        <button class="active-press bg-gray-700/50 rounded text-xs font-bold text-gray-300 hover:bg-gray-600 transition-colors border border-gray-700" onclick="quickAdd(10000)">+10,000</button>
+
+                        <button class="active-press bg-statusRed/10 text-statusRed rounded text-lg font-bold hover:bg-statusRed/20 border border-statusRed/30 transition-colors" onclick="numClear()">C</button>
+                        <button class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors" onclick="numClick('0')">0</button>
+                        <button class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors" onclick="numClick('00')">00</button>
+                        
+                        <button class="active-press bg-statusGreen text-white rounded font-bold text-xl hover:bg-green-600 flex items-center justify-center shadow-[0_0_15px_rgba(22,163,74,0.3)] transition-all" onclick="showConfirmation()">PAY</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="errorModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
+        <div class="bg-bgPanel w-full max-w-sm rounded-lg shadow-2xl overflow-hidden relative border border-gray-700 transform transition-all scale-100">
+            <div class="p-6 flex flex-col items-center text-center">
+                <div class="w-14 h-14 bg-red-500/10 rounded-full flex items-center justify-center mb-4 border border-red-500/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">Insufficient Payment</h3>
+                <p class="text-sm text-gray-400 mb-6">The amount tendered is less than the total due. Please enter a valid amount.</p>
+                <button onclick="closeErrorModal()" class="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-semibold text-sm transition shadow-lg">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirmModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[50] hidden flex items-center justify-center p-4">
+        <div class="bg-bgPanel w-full max-w-md rounded-lg shadow-2xl overflow-hidden relative border border-gray-700">
+            
+            <button onclick="hideConfirmation()" class="absolute top-4 right-4 text-white/70 hover:text-white z-10 p-2 rounded-full hover:bg-white/10 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <div class="h-16 bg-modalHeader w-full"></div>
+            
+            <div class="px-8 pb-8 pt-6 relative">
+                
+                <h2 class="text-xl font-semibold text-center mb-6">Confirm Activity Order</h2>
+
+                <div class="space-y-4 text-sm border-b border-gray-700 pb-6 mb-6">
+                    <div id="confirmItemsList" class="space-y-4">
+                        </div>
+                </div>
+
+                <div class="space-y-3 mb-6 text-sm">
+                    <div class="text-gray-300">Mode: Cash</div>
+                    <div class="text-gray-300">Customer Name / ID | Activity 01</div>
+                    <div class="text-gray-300 border-b border-gray-700 pb-3 mb-2">02/16/2026 | 02:45 PM</div>
+                    
+                    <div class="flex justify-between items-end">
+                        <span class="text-gray-400">Total Amount</span>
+                        <span class="text-lg font-semibold text-white" id="confirmTotal">P 0.00</span>
+                    </div>
+                     <div class="flex justify-between items-end">
+                        <span class="text-gray-400">Cash Amount</span>
+                        <span class="text-lg font-semibold text-white" id="confirmTendered">P 0.00</span>
+                    </div>
+                     <div class="flex justify-between items-end mt-2 pt-2 border-t border-gray-700">
+                        <span class="text-gray-400 font-bold">CHANGE</span>
+                        <span class="text-2xl font-bold text-green-400" id="confirmChange">P 0.00</span>
+                    </div>
+                </div>
+
+                <button onclick="finalizeTransaction()" class="w-full bg-gradient-to-r from-accentPurple to-accentDark hover:from-accentDark hover:to-accentPurple text-white py-3 rounded-lg font-medium shadow-lg active-press transition-all flex items-center justify-center border border-white/10">
+                     Confirm Order
+                 </button>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="successModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
+        <div class="bg-bgPanel w-full max-w-sm rounded-lg shadow-2xl overflow-hidden relative border border-gray-700 transform transition-all scale-100">
+            <div class="p-6 flex flex-col items-center text-center">
+                <div class="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mb-4 border border-green-500/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">Order Confirmed!</h3>
+                <p class="text-sm text-gray-400 mb-2">Transaction ID</p>
+                <div class="bg-black/50 px-4 py-2 rounded border border-gray-700 mb-6 font-mono text-lg text-accentPurple font-bold tracking-wider" id="transactionIdDisplay">
+                    #REC-83921
+                </div>
+                <button onclick="closeSuccessModal()" class="w-full bg-[#2a2d35] hover:bg-[#353942] text-white py-3 rounded-lg font-semibold text-sm transition border border-gray-600">
+                    Close & New Order
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- LOGIC START ---
+
+        const modal = document.getElementById('modalOverlay');
+        const confirmModal = document.getElementById('confirmModal');
+        const errorModal = document.getElementById('errorModal');
+        const successModal = document.getElementById('successModal');
+        
+        const modalTitle = document.getElementById('modalTitle');
+        const numpadInput = document.getElementById('numpadInput');
+        const guestList = document.getElementById('guestList');
+        
+        const orderList = document.getElementById('orderList');
+        const totalDisplay = document.getElementById('totalDisplay');
+
+        const confirmTotal = document.getElementById('confirmTotal');
+        const confirmTendered = document.getElementById('confirmTendered');
+        const confirmChange = document.getElementById('confirmChange');
+        const confirmItemsList = document.getElementById('confirmItemsList');
+        
+        let currentInput = '';
+        let currentTotal = 5000; 
+
+        // Initial Data Strings
+        const defaultItemsHTML = `
+            <div class="bg-bgPanel p-3 rounded-lg flex justify-between items-center border border-gray-800">
+                <div>
+                    <div class="font-medium text-white">Recreational Activity</div>
+                    <div class="text-xs text-textGray">Category 01 - Activity 01 | Qty: 1</div>
+                </div>
+                <div class="font-bold text-green-400">P 5,000.00</div>
+            </div>
+        `;
+
+        const confirmItemsHTML = `
+            <div class="flex justify-between items-start">
+                <div class="flex gap-4">
+                    <span class="text-gray-400 w-6 text-right">x1</span>
+                    <div><div>Recreational Activity</div><div class="text-xs text-gray-500 mt-0.5">Category 01 - Activity 01</div></div>
+                </div>
+                <span class="font-medium">P 5000.00</span>
+            </div>
+        `;
+
+        // 1. Open Activity Modal
+        function openModal(id) {
+            modalTitle.innerText = `Activity ${id} | Specification`;
+            modal.classList.remove('hidden');
+            resetToDefaultState();
+            updateNumpad();
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+        }
+
+        // 2. Reset State
+        function resetToDefaultState() {
+            currentInput = '';
+            currentTotal = 5000;
+            orderList.innerHTML = defaultItemsHTML;
+            totalDisplay.innerText = 'P 5,000.00';
+            confirmItemsList.innerHTML = confirmItemsHTML;
+        }
+
+        // 3. Add Guest Logic
+        function addGuestInput() {
+            const container = document.getElementById('guestList');
+            const div = document.createElement('div');
+            div.className = 'flex items-center gap-2 guest-row animate-in fade-in slide-in-from-top-2 duration-300';
+            div.innerHTML = `
+                <input type="text" placeholder="Guest Name"
+                    class="flex-1 bg-bgInput border border-gray-700 rounded-lg p-3 text-sm focus:border-accentPurple focus:outline-none text-white transition-colors">
+                <button onclick="removeGuest(this)"
+                    class="p-3 rounded-lg bg-gray-800 text-gray-400 border border-gray-700 hover:border-red-500/50 hover:bg-red-500/10 hover:text-red-500 transition-all active:scale-95">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                </button>
+            `;
+            container.appendChild(div);
+        }
+
+        function removeGuest(button) {
+            button.closest('.guest-row').remove();
+        }
+
+        // 4. "PAY" Button Logic
+        function showConfirmation() {
+            if (currentTotal === 0) {
+                alert("Order is empty.");
+                return;
+            }
+
+            const tendered = currentInput === '' ? 0 : parseFloat(currentInput);
+
+            // LOGIC CHECK: Is Tendered >= Total?
+            if (tendered < currentTotal) {
+                errorModal.classList.remove('hidden');
+                return; 
+            }
+
+            // Calculation
+            const change = tendered - currentTotal;
+            confirmTotal.innerText = 'P ' + currentTotal.toLocaleString('en-US', {minimumFractionDigits: 2});
+            confirmTendered.innerText = 'P ' + tendered.toLocaleString('en-US', {minimumFractionDigits: 2});
+            confirmChange.innerText = 'P ' + (change > 0 ? change : 0).toLocaleString('en-US', {minimumFractionDigits: 2});
+            
+            confirmModal.classList.remove('hidden');
+        }
+
+        function hideConfirmation() {
+            confirmModal.classList.add('hidden');
+        }
+
+        function closeErrorModal() {
+            errorModal.classList.add('hidden');
+        }
+
+        // 5. "Confirm Order" Logic
+        function finalizeTransaction() {
+            // Hide confirm modal
+            confirmModal.classList.add('hidden');
+            
+            // Generate Random ID
+            const randomId = Math.floor(10000 + Math.random() * 90000);
+            document.getElementById('transactionIdDisplay').innerText = "#REC-" + randomId;
+
+            // Show Success Modal
+            successModal.classList.remove('hidden');
+        }
+
+        function closeSuccessModal() {
+            successModal.classList.add('hidden');
+            closeModal(); // Close the main underlying modal too
+            resetToDefaultState(); // Reset everything for next use
+        }
+
+        // 6. Numpad Logic
+        function clearOrder() {
+            orderList.innerHTML = `<div class="h-full flex flex-col items-center justify-center text-gray-500 italic mt-8"><span>Order Cleared</span></div>`;
+            confirmItemsList.innerHTML = '<div class="text-center text-gray-500 italic">No Items</div>';
+            currentTotal = 0;
+            totalDisplay.innerText = "P 0.00";
+            currentInput = "";
+            updateNumpad();
+        }
+
+        function numClick(val) {
+            if (currentInput.length < 10) {
+                // Remove leading zero if user types regular number
+                if (currentInput === '0' && val !== '0' && val !== '00') {
+                    currentInput = val;
+                } else {
+                    currentInput += val;
+                }
+                updateNumpad();
+            }
+        }
+
+        function numClear() {
+            currentInput = '';
+            updateNumpad();
+        }
+
+        function quickAdd(val) {
+            let currentVal = currentInput === '' ? 0 : parseFloat(currentInput);
+            let newVal = currentVal + val;
+            currentInput = newVal.toString();
+            updateNumpad();
+        }
+
+        function updateNumpad() {
+            if(currentInput === '') {
+                numpadInput.innerText = '0';
+            } else {
+                let num = parseFloat(currentInput);
+                numpadInput.innerText = num.toLocaleString('en-US');
+            }
+        }
+
+        // Background click listeners
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+            if (e.target === confirmModal) hideConfirmation();
+            // We usually don't close error/success on bg click to force button interaction, but can be added if needed.
+        });
+
+        // Date Utils
+        function updateDate() {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString() + ' | ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('header-date').innerText = dateStr;
+        }
+        updateDate();
+    </script>
+</body>
+</html>

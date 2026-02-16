@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>POS - Recreational Activities</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        bgMain: '#000000',     
+                        bgPanel: '#18181b',    
+                        bgInput: '#27272a',
+                        accentPurple: '#7c3aed',
+                        accentDark: '#5b21b6',
+                        textGray: '#a1a1aa',
+                        statusRed: '#dc2626',
+                        statusOrange: '#ea580c',
+                        statusGray: '#52525b',
+                        statusGreen: '#16a34a',
+                        modalHeader: '#6d28d9',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .active-press:active { transform: scale(0.95); transition: transform 0.05s; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .new-input { animation: fadeIn 0.2s ease-out forwards; }
+    </style>
+</head>
+<body class="bg-[#0f1115] text-gray-200 font-sans p-4 min-h-screen flex flex-col">
+
+    <header
+        class="h-16 flex-none flex items-center justify-between px-6 border-b border-gray-700 bg-[#1e2128] rounded-xl mb-6">
+        
+        <div class="flex items-center gap-6">
+            <div class="flex flex-col">
+                <h1 class="text-lg font-bold text-gray-200 tracking-tight leading-none">Recreational Activities</h1>
+                <span class="text-[10px] text-textGray font-mono mt-1" id="header-date">02/16/2026 | 02:45 PM</span>
+            </div>
+        </div>
+        
+        <div class="flex bg-bgPanel rounded-lg p-1 space-x-1 border border-gray-800">
+            <div onclick="window.location.href='../waiter/tablemanagement'"  class="px-6 py-1.5 rounded text-textGray text-sm font-medium hover:bg-white/5 cursor-pointer flex items-center gap-2 transition-colors">
+                Tables Management
+            </div>
+            <div onclick="window.location.href='../waiter/recreationactivity'" class="bg-accentPurple text-white px-6 py-1.5 rounded text-sm font-bold shadow-lg flex items-center gap-2">
+                Recreation Activities
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-3 bg-bgPanel px-3 py-1.5 rounded-full border border-gray-800 hover:border-gray-600 transition-colors cursor-pointer">
+            <div class="w-8 h-8 rounded-full bg-yellow-600 overflow-hidden ring-2 ring-gray-800">
+                <img src="../static/images/error.jpeg" class="w-full h-full object-cover">
+            </div>
+            <div class="flex flex-col pr-2">
+                <span class="text-xs font-bold text-white">Anthony Beltran</span>
+                <span class="text-[10px] text-textGray">Employee 1</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 relative overflow-hidden flex flex-col">
+        <div class="flex justify-between items-center px-8 py-4">
+            <div class="flex items-center space-x-6 text-xs font-medium text-gray-400">  
+                <select id="ActivityFilter" class="appearance-none bg-bgPanel border border-gray-700 text-white py-1.5 pl-4 pr-10 rounded-lg text-sm font-bold focus:outline-none focus:border-accentPurple hover:border-gray-500 transition-colors cursor-pointer shadow-lg">
+                    <option value="">All</option>
+                    <option value="ongoing">Ongoing</option>
+                    <option value="done">Done</option>
+                </select>          
+            </div>
+
+            <div class="flex justify-end px-8 py-4 space-x-6 text-xs font-medium text-gray-400">
+            <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-statusOrange shadow-[0_0_8px_rgba(82,82,91,0.5)]"></span>Done</div>
+            <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#7c3aed] shadow-[0_0_8px_rgba(220,38,38,0.5)]"></span> Occupied</div>
+        </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto no-scrollbar px-8 pb-20">
+            
+            <div class="mb-8">
+                <div class="grid grid-cols-8 gap-4">
+                    <div onclick="openModal()" class="flex flex-col justify-between p-2 active-press aspect-square border-2 border-accentPurple rounded-lg bg-bgPanel flex items-center justify-center cursor-pointer hover:bg-white/5 group">
+                        <p class="text-[10px]">TX-JSBDKSSV20</p>
+                        <span class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-black font-bold text-sm group-hover:scale-110 transition-transform">01</span>
+                        <div class="flex flex-col gap-1 text-center">
+                        <p class="text-[10px] text-statusGreen">Total: Php2,500</p>
+                        <p class="text-[8px] text-statusRed"> Remaining: Php2,500</p>
+                    </div>
+                    </div>
+                    <div onclick="openModal()" class="flex flex-col justify-between p-2 active-press aspect-square border-2 border-accentPurple rounded-lg bg-bgPanel flex items-center justify-center cursor-pointer hover:bg-white/5 group">
+                        <p class="text-[10px]">TX-JSBDKSSV20</p>
+                        <span class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-black font-bold text-sm group-hover:scale-110 transition-transform">01</span>
+                        <div class="flex flex-col gap-1 text-center">
+                        <p class="text-[10px] text-statusGreen">Total: Php2,500</p>
+                        <p class="text-[8px] text-statusRed"> Remaining: Php2,500</p>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+
+<script>
+        function openModal() {
+            window.location.href='../waiter/recreationalctivitymenu'
+        }
+
+        function updateDate() {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString() + ' | ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('header-date').innerText = dateStr;
+        }
+        updateDate();
+    </script>
+</body>
+</html>

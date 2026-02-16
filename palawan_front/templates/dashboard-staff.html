@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Point of Sale</title>
+    <link rel="stylesheet" href="../static/styles/main.css">
+    <link rel="stylesheet" href="../static/styles/dashboard-staff.css">
+    <link rel="stylesheet" href="../static/styles/cont43.css">
+</head>
+
+<body>
+    <div class="cont43">
+    <aside>
+        <div onclick="window.location.href='/dashboard'" class="aside-container active">
+            <p>Point of Sales</p>
+        </div>
+        
+        <div id="ModalLogout" class="aside-container">
+            <p>Logout</p>
+        </div>
+    </aside>
+
+    <main>
+        <div class="Header-Main-Container">
+            <div class="Header-Main-Container-V2">
+                <div 
+                    style="display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 20px; border-radius: 5px; background-color: #fff;">
+                    <img src="../static/icons/hotel-line.png" width="24" height="24">
+                    <p style="color: #111; font-weight: bold;">JSB Lifestyle and Resort</p>
+                </div>
+            </div>
+        </div>
+        <div class="Header-Main-Container">
+            <div class="Header-Main-Container-V2">
+                <div style="display: flex; gap: 5px; flex-direction: column; border-radius: 5px; cursor: pointer;">
+                    <button name="Add" style="display: flex; justify-content: center; padding: 8px; cursor: pointer; color: #fff; width: 150px; background-color: #1c2224; border-radius: 5px; border: #1c2224 solid 1px;" onclick="openReserveModal();"><img src="../static/icons/add-circle-line.png" width="25" height="25"></button>
+                </div>
+                <div style="display: flex; gap: 5px; flex-direction: column; border-radius: 5px; cursor: pointer;">
+                    <input class="InputUser" id="Date" name="search" type="date" placeholder="Search">
+                </div>
+                <div
+                    style="position: relative; display: flex; gap: 5px; flex-direction: column; border-radius: 5px; cursor: pointer;">
+                    <input class="InputUser" id="search" name="search" type="search" placeholder="Search">
+                    <img src="../static/icons/search-line.png"
+                        style="position: absolute; right: 5px; top: 5px; width: 30px; height: 30px;">
+                </div>
+
+            </div>
+        </div>
+
+        <div class="Main-Container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Customer Name</th>
+                        <th>Contact #</th>
+                        <th>Datetime</th>
+                        <th>Reference No</th>
+                        <th>Attended By</th>
+                        <th>Net Billing</th>
+                        <th>Action</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for txn in all_transaction %}
+                    <tr {% if txn.status == 'Reserved' %} style="background-color: #d32f2f;" {% endif %}>
+                        <td>{{ txn.first_name }} {{ txn.last_name }}</td>
+                        <td>{{ txn.contact_number }}</td>
+                        <td>{{ txn.created_at.strftime('%m/%d/%y %I:%M %p') }}</td>
+                        <td>{{ txn.reference_number }}</td>
+                        <td>{{ txn.attended_by }}</td>
+                        <td>
+                            ₱{{
+                                "{:,.2f}".format(
+                                    txn.total_billing * (
+                                        100 - txn.discount - (20 if txn.isPWD == 1 else 0)
+                                    ) / 100
+                                )
+                            }}
+                            </td>
+                        <td class="View" onclick="openTransactionModal({{ txn.transaction_id }}, '{{ txn.source_table }}')">View</td>
+                        <td style="font-weight: 900; color: 
+                            {% if txn.source_table == 'transactions' %}
+                                #00bf63
+                            {% elif txn.source_table == 'reserved_transactions' %}
+                               #d32f2f 
+                            {% elif txn.source_table == 'cancelled_transactions' %}
+                                #888888
+                            {% else %}
+                                #000
+                            {% endif %}
+                        ">
+                            {% if txn.source_table == 'transactions' %}
+                                Completed
+                            {% elif txn.source_table == 'reserved_transactions' %}
+                                Reservation
+                            {% elif txn.source_table == 'cancelled_transactions' %}
+                                Cancelled
+                            {% else %}
+                                Unknown
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    
+                </tbody>
+            </table>
+
+
+
+        </div>
+    </main>
+
+    <div id="transactionModal" class="modal">
+        <div class="Modal-Content" style="width: 350px; text-align:center;">
+            <p>What kind of transaction?</p>
+            <div style="margin-top:20px;">
+                <button id="Walk-In" style="margin-right:10px; background-color:#00bf63;">Walk-In</button>
+                <button id="Reservation" style="background-color:#e7a200;">Reservation</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutModal" class="modal">
+        <div class="Modal-Content" style="width: 350px; text-align:center;">
+            <p>Are you sure you want to logout?</p>
+            <div style="margin-top:20px;">
+                <button id="Logout" onclick="window.location.href='/'"
+                    style="margin-right:10px; background-color:#d32f2f;">Logout</button>
+                <button id="Cancel" style="background-color:#555;">Cancel</button>
+            </div>
+        </div>
+    </div></div>
+
+
+    <script src="../static/scripts/logout.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const searchInput = document.getElementById("search");
+            const fromDateInput = document.getElementById("Date");
+            
+            const rows = document.querySelectorAll("tbody tr");
+
+            function filterTable() {
+                const searchValue = searchInput.value.toLowerCase();
+                const fromDate = fromDateInput.value ? new Date(fromDateInput.value) : null;
+                function formatMMDDYY(date) {
+                    if (!date) return null;
+                    const mm = String(date.getMonth() + 1).padStart(2, '0');
+                    const dd = String(date.getDate()).padStart(2, '0');
+                    const yy = String(date.getFullYear()).slice(-2);
+                    return `${mm}/${dd}/${yy}`;
+                }
+                const fromDateFormatted = formatMMDDYY(fromDate);
+                
+
+                rows.forEach(row => {
+                    const cellsText = row.innerText.toLowerCase();
+
+                    // Date column (3rd column)
+                    const dateText = row.children[2].innerText; // MM/DD/YY
+                    const rowDate = new Date(dateText);
+                    let matchesFromDate = !fromDateFormatted || dateText.includes(fromDateFormatted);
+
+                    let matchesSearch = cellsText.includes(searchValue);
+
+
+                    row.style.display =
+                        matchesSearch && matchesFromDate 
+                            ? ""
+                            : "none";
+                });
+            }
+
+            searchInput.addEventListener("input", filterTable);
+            
+            fromDateInput.addEventListener("change", filterTable);
+        });
+
+        function openTransactionModal(transactionId, sourceTable) {
+            if (sourceTable === 'transactions') {
+                window.location.href = `./dashboard/form/${transactionId}`;
+            } else if (sourceTable === 'reserved_transactions') {
+                window.location.href = `./dashboard/reservation/form/${transactionId}`;
+            } else if (sourceTable === 'cancelled_transactions') {
+                // optional: handle cancelled
+                alert('This transaction is cancelled');
+            }
+        }
+        // "location.href = '/dashboard/form'"
+
+        const addBtn = document.getElementById("Add");
+        const modal = document.getElementById("transactionModal");
+        const walkInBtn = document.getElementById("Walk-In");
+        const reservationBtn = document.getElementById("Reservation");
+        
+        function openReserveModal(){
+            modal.classList.add("show");
+        }
+        
+
+
+        
+
+        walkInBtn.addEventListener("click", function () {
+            window.location.href = '/dashboard/form';
+        });
+
+        reservationBtn.addEventListener("click", function () {
+            window.location.href = "/dashboard/reservation";
+        });
+
+        modal.addEventListener("click", function (e) {
+            if (e.target === modal) {
+                modal.classList.remove("show");
+            }
+        });
+</script>
+
+</body>
+
+</html>

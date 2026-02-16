@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>POS Table Management</title>
+    <style>
+        .pos-table {
+            position: relative;
+            border-width: 2px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #1a1d24;
+            transition: all 0.2s;
+        }
+
+        .chair {
+            position: absolute;
+            width: 14px;   
+            height: 38px; 
+            border-width: 2px;
+            border-radius: 999px;
+            background-color: transparent; 
+        }
+
+        .chair-left { left: -22px; }
+        .chair-right { right: -22px; }
+
+        .pos-1 { top: 15px; }
+        .pos-2 { bottom: 15px; }
+
+        .vip-1 { top: 20px; }
+        .vip-2 { top: 50%; transform: translateY(-50%); }
+        .vip-3 { bottom: 20px; }
+
+        .table-number {
+            width: 50px;
+            height: 50px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: black;
+            font-size: 1.25rem;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="bg-[#0f1115] text-gray-200 font-sans p-6 min-h-screen flex flex-col gap-6">
+
+    <div class="flex items-center gap-4">
+        <div class="bg-[#1e2128] rounded-full pl-2 pr-6 py-2 flex items-center gap-3 border border-gray-700">
+            <div class="w-8 h-8 bg-orange-400 rounded-full flex items-center justify-center overflow-hidden">
+                <img src="../static/images/error.jpeg" alt="User">
+            </div>
+            <span class="text-xs font-mono text-gray-400">TX-ID-0889372261-00388</span>
+        </div>
+        <div class="bg-[#1e2128] text-gray-200 px-6 py-2 rounded-full border border-gray-700 font-semibold text-sm">
+            Table 01
+        </div>
+    </div>
+
+    <div class="bg-[#16181d] border border-gray-800 rounded-xl p-6 flex flex-col gap-6">
+        
+        <div class="grid grid-cols-4 gap-2">
+            <button onclick="window.location.href='/tablemanagement'" class="bg-[#3b1a5a] text-white py-3 rounded-lg border border-purple-500 font-medium">Table Management</button>
+            <button onclick="window.location.href='/menu'" class="bg-[#242731] text-gray-400 py-3 rounded-lg border border-gray-700 hover:bg-[#2f333f]">Food Order</button>
+            <button class="bg-[#242731] text-gray-400 py-3 rounded-lg border border-gray-700 hover:bg-[#2f333f]">Recreational Activities</button>
+            <div class="bg-[#242731] text-gray-200 px-4 py-3 rounded-lg border border-gray-700 flex justify-between items-center">
+                <span>Select Table</span>
+                <button class="text-blue-500 text-sm hover:underline">Actions</button>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-between bg-[#20232b] px-4 py-3 rounded-lg">
+            <div class="relative">
+                <select class="appearance-none bg-black text-white text-sm pl-3 pr-8 py-1.5 rounded border border-gray-700 focus:outline-none focus:border-gray-500">
+                    <option>Deck Floor 1</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white">
+                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-6 text-[11px] uppercase font-bold tracking-wide text-gray-400">
+                <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-[#4ade80]"></span> Available</div>
+                <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-[#fb923c]"></span> Reserved</div>
+                <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-[#a855f7]"></span> Occupied</div>
+                <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-[#3b82f6]"></span> Ready to Pay</div>
+            </div>
+        </div>
+
+        <div class="flex gap-8 overflow-x-auto pb-4">
+            
+            <div class="grid grid-cols-4 gap-x-12 gap-y-10 flex-grow">
+                
+                <div class="relative w-[110px] h-[160px]">
+                    <div class="chair chair-left pos-1 border-purple-500"></div>
+                    <div class="chair chair-left pos-2 border-purple-500"></div>
+                    <div class="chair chair-right pos-1 border-purple-500"></div>
+                    <div class="chair chair-right pos-2 border-purple-500"></div>
+                    <div class="pos-table w-full h-full border-purple-500">
+                        <div class="table-number">01</div>
+                        <span class="absolute bottom-4 text-[10px] font-bold text-gray-300">TAB P 450.00</span>
+                    </div>
+                </div>
+
+                <div class="relative w-[110px] h-[160px]">
+                    <div class="chair chair-left pos-1 border-green-500"></div>
+                    <div class="chair chair-left pos-2 border-green-500"></div>
+                    <div class="chair chair-right pos-1 border-green-500"></div>
+                    <div class="chair chair-right pos-2 border-green-500"></div>
+                    <div class="pos-table w-full h-full border-green-500">
+                        <div class="table-number">02</div>
+                    </div>
+                </div>
+
+                <div class="relative w-[110px] h-[160px]">
+                    <div class="chair chair-left pos-1 border-green-500"></div>
+                    <div class="chair chair-left pos-2 border-green-500"></div>
+                    <div class="chair chair-right pos-1 border-green-500"></div>
+                    <div class="chair chair-right pos-2 border-green-500"></div>
+                    <div class="pos-table w-full h-full border-green-500">
+                        <div class="table-number">03</div>
+                    </div>
+                </div>
+
+                <div class="relative w-[110px] h-[160px]">
+                    <div class="chair chair-left pos-1 border-green-500"></div>
+                    <div class="chair chair-left pos-2 border-green-500"></div>
+                    <div class="chair chair-right pos-1 border-green-500"></div>
+                    <div class="chair chair-right pos-2 border-green-500"></div>
+                    <div class="pos-table w-full h-full border-green-500">
+                        <div class="table-number">04</div>
+                    </div>
+                </div>
+
+                <div class="relative w-[110px] h-[160px]">
+                    <div class="chair chair-left pos-1 border-green-500"></div>
+                    <div class="chair chair-left pos-2 border-green-500"></div>
+                    <div class="chair chair-right pos-1 border-green-500"></div>
+                    <div class="chair chair-right pos-2 border-green-500"></div>
+                    <div class="pos-table w-full h-full border-green-500">
+                        <div class="table-number">01</div>
+                    </div>
+                </div>
+
+                <div class="relative w-[110px] h-[160px]">
+                    <div class="chair chair-left pos-1 border-purple-500"></div>
+                    <div class="chair chair-left pos-2 border-purple-500"></div>
+                    <div class="chair chair-right pos-1 border-purple-500"></div>
+                    <div class="chair chair-right pos-2 border-purple-500"></div>
+                    <div class="pos-table w-full h-full border-purple-500">
+                        <div class="table-number">02</div>
+                        <span class="absolute bottom-4 text-[10px] font-bold text-gray-300">TAB P 2,400.00</span>
+                    </div>
+                </div>
+
+                <div class="relative w-[110px] h-[160px]">
+                    <div class="chair chair-left pos-1 border-blue-500"></div>
+                    <div class="chair chair-left pos-2 border-blue-500"></div>
+                    <div class="chair chair-right pos-1 border-blue-500"></div>
+                    <div class="chair chair-right pos-2 border-blue-500"></div>
+                    <div class="pos-table w-full h-full border-blue-500">
+                        <div class="table-number">03</div>
+                        <span class="absolute bottom-4 text-[10px] font-bold text-gray-300">TAB P 2,400.00</span>
+                    </div>
+                </div>
+
+                <div class="relative w-[110px] h-[160px]">
+                    <div class="chair chair-left pos-1 border-green-500"></div>
+                    <div class="chair chair-left pos-2 border-green-500"></div>
+                    <div class="chair chair-right pos-1 border-green-500"></div>
+                    <div class="chair chair-right pos-2 border-green-500"></div>
+                    <div class="pos-table w-full h-full border-green-500">
+                        <div class="table-number">04</div>
+                    </div>
+                </div>
+
+                <div class="relative w-[110px] h-[160px]">
+                    <div class="chair chair-left pos-1 border-green-500"></div>
+                    <div class="chair chair-left pos-2 border-green-500"></div>
+                    <div class="chair chair-right pos-1 border-green-500"></div>
+                    <div class="chair chair-right pos-2 border-green-500"></div>
+                    <div class="pos-table w-full h-full border-green-500">
+                        <div class="table-number">01</div>
+                    </div>
+                </div>
+
+                <div class="relative w-[110px] h-[160px]">
+                    <div class="chair chair-left pos-1 border-green-500"></div>
+                    <div class="chair chair-left pos-2 border-green-500"></div>
+                    <div class="chair chair-right pos-1 border-green-500"></div>
+                    <div class="chair chair-right pos-2 border-green-500"></div>
+                    <div class="pos-table w-full h-full border-green-500">
+                        <div class="table-number">02</div>
+                    </div>
+                </div>
+
+                <div class="relative w-[110px] h-[160px]">
+                    <div class="chair chair-left pos-1 border-green-500"></div>
+                    <div class="chair chair-left pos-2 border-green-500"></div>
+                    <div class="chair chair-right pos-1 border-green-500"></div>
+                    <div class="chair chair-right pos-2 border-green-500"></div>
+                    <div class="pos-table w-full h-full border-green-500">
+                        <div class="table-number">03</div>
+                    </div>
+                </div>
+
+                 <div class="relative w-[110px] h-[160px]">
+                    <div class="chair chair-left pos-1 border-purple-500"></div>
+                    <div class="chair chair-left pos-2 border-purple-500"></div>
+                    <div class="chair chair-right pos-1 border-purple-500"></div>
+                    <div class="chair chair-right pos-2 border-purple-500"></div>
+                    <div class="pos-table w-full h-full border-purple-500">
+                        <div class="table-number">04</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="flex flex-col gap-10 border-l border-gray-800 pl-8">
+                
+                <div class="relative w-[120px] h-[230px]">
+                    <div class="chair chair-left vip-1 border-orange-500"></div>
+                    <div class="chair chair-left vip-2 border-orange-500"></div>
+                    <div class="chair chair-left vip-3 border-orange-500"></div>
+                    <div class="chair chair-right vip-1 border-orange-500"></div>
+                    <div class="chair chair-right vip-2 border-orange-500"></div>
+                    <div class="chair chair-right vip-3 border-orange-500"></div>
+                    <div class="pos-table w-full h-full border-orange-500">
+                        <div class="table-number text-xl">VIP</div>
+                    </div>
+                </div>
+
+                <div class="relative w-[120px] h-[230px]">
+                    <div class="chair chair-left vip-1 border-orange-500"></div>
+                    <div class="chair chair-left vip-2 border-orange-500"></div>
+                    <div class="chair chair-left vip-3 border-orange-500"></div>
+                    <div class="chair chair-right vip-1 border-orange-500"></div>
+                    <div class="chair chair-right vip-2 border-orange-500"></div>
+                    <div class="chair chair-right vip-3 border-orange-500"></div>
+                    <div class="pos-table w-full h-full border-orange-500">
+                        <div class="table-number text-xl">VIP</div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

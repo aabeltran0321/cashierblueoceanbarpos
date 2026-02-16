@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Point of Sale</title>
+    <link rel="stylesheet" href="../static/styles/main.css">
+    <link rel="stylesheet" href="../static/styles/dashboard-staff.css">
+    <link rel="stylesheet" href="../static/styles/cont43.css">
+</head>
+
+<body>
+    <div class="cont43">
+    <aside>
+        <div onclick="window.location.href='/dashboard'" class="aside-container active">
+            <p>Point of Sales</p>
+        </div>
+        <div onclick="window.location.href='/employeemanagement'" class="aside-container">
+            <p>Staff <br> Management</p>
+        </div>
+        <div id="ModalLogout" class="aside-container">
+            <p>Logout</p>
+        </div>
+    </aside>
+
+    <main>
+        <div class="Header-Main-Container">
+            <div class="Header-Main-Container-V2">
+                <div  class="head2"
+                    style="display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 20px; border-radius: 5px; background-color: #fff;">
+                    <img src="../static/icons/hotel-line.png" width="24" height="24">
+                    <p style="color: #111; font-weight: bold;">JSB Lifestyle and Resort</p>
+                </div>
+                <div  class="head2"
+                    style="display: flex; gap: 5px; flex-direction: column; border-radius: 5px; cursor: pointer;">
+                    <input class="InputUser" id="FromDate" name="search" type="date" placeholder="Search">
+                </div>
+                <div  class="head2"
+                    style="display: none; gap: 5px; flex-direction: column; border-radius: 5px; cursor: pointer;">
+                    <p style="color: #fff; font-size: 18px;">To</p>
+                </div>
+                <div  class="head2"
+                    style="display: none; gap: 5px; flex-direction: column; border-radius: 5px; cursor: pointer;">
+                    <input class="InputUser" id="ToDate" name="search" type="date" placeholder="Search">
+                </div>
+                <div  class="head2"
+                    style="position: relative; display: flex; gap: 5px; flex-direction: column; border-radius: 5px; cursor: pointer;">
+                    <input class="InputUser" id="search" name="search" type="search" placeholder="Search">
+                    <img src="../static/icons/search-line.png"
+                        style="position: absolute; right: 5px; top: 5px; width: 30px; height: 30px;">
+                </div>
+            </div>
+        </div>
+        <div class="Header-Main-Container">
+            <div class="Header-Main-Container-V2">
+                <div class="head2"
+                    style="display: flex; gap: 5px; flex-direction: column; width: 150px; border-radius: 5px;">
+                    <label for="TotalSummary" style="color: #fff;">Total Summary:</label>
+                    <p name="TotalSummary" id="TotalSummary"
+                        style="padding: 10px; color: #fff; background-color: #1c2224; border-radius: 5px; border: #1c2224 solid 1px;">
+                        ₱000,000.00</p>
+                </div>
+
+                <div  class="head2"
+                    style="display: flex; gap: 5px; flex-direction: column; width: 150px; border-radius: 5px;">
+                    <label for="MTDTotal" style="color: #fff;">MTD Total:</label>
+                    <p name="MTDTotal" id="MTDTotal"
+                        style="padding: 10px; color: #fff; background-color: #1c2224; border-radius: 5px; border: #1c2224 solid 1px;">
+                        ₱000,000.00</p>
+                </div>
+
+                <div  class="head2"
+                    style="display: flex; gap: 5px; flex-direction: column; width: 150px; border-radius: 5px;">
+                    <label for="TotalTransaction" style="color: #fff;">Total Transaction:</label>
+                    <p name="TotalTransaction" id="TotalTransaction"
+                        style="padding: 10px; color: #fff; background-color: #1c2224; border-radius: 5px; border: #1c2224 solid 1px;">
+                        344</p>
+                </div>
+
+                <div  class="head2"
+                    style="display: flex; gap: 5px; flex-direction: column; width: 150px; border-radius: 5px;">
+                    <label for="Average" style="color: #fff;">Average:</label>
+                    <p name="Average" id="Average"
+                        style="padding: 10px; color: #fff; background-color: #1c2224; border-radius: 5px; border: #1c2224 solid 1px;">
+                        ₱000,000.00</p>
+                </div>
+                <!-- <div  class="head2" style="display: flex; gap: 5px; flex-direction: column; border-radius: 5px; cursor: pointer;">
+                    <label for="Add" style="color: #fff;">Add Button:</label>
+                    <button id="Add" name="Add" style="display: flex; justify-content: center; padding: 8px; cursor: pointer; color: #fff; width: 150px; background-color: #1c2224; border-radius: 5px; border: #1c2224 solid 1px;" onclick="openReserveModal()"><img src="../static/icons/add-circle-line.png" width="20" height="20"></button>
+                </div> -->
+                <div  class="head2"
+                    style="display: flex; gap: 5px; flex-direction: column; width: 150px; border-radius: 5px; cursor: pointer;">
+                    <label for="Export" style="color: #fff;">Export Data:</label>
+                    <button name="Export" id="Export"
+                        style="padding: 12px; cursor: pointer; color: #fff; background-color: #00bf63; border-radius: 5px; border: none;" onclick="openExportModal()">
+                        Export</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="Main-Container">
+            <table class="table" id="transactiontable">
+                <thead>
+                    <tr>
+                        <th>Customer Name</th>
+                        <th>Contact #</th>
+                        <th>Datetime</th>
+                        <th>Reference No</th>
+                        <th>Attended By</th>
+                        <th>Net Billing</th>
+                        <th>Action</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for txn in all_transaction %}
+                    <tr {% if txn.status == 'Reserved' %} style="background-color: #d32f2f;" {% endif %}>
+                        <td>{{ txn.customer_name}}</td>
+                        <td>{{ txn.contact_number }}</td>
+                        <td>{{ txn.created_at.strftime('%m/%d/%y %I:%M %p') }}</td>
+                        <td>{{ txn.reference_number or "N/A" }}</td>
+                        <td>{{ txn.attended_by or "N/A" }}</td>
+                        
+                        <td>
+                            ₱{{
+                                txn.totalnetbilling
+                            }}
+                            </td>
+                        <td class="View" onclick="openTransactionModal({{ txn.id}}, 'transactions')">View</td>
+                        <td style="font-weight: 900; color: 
+                            {% if txn.source_table == 'transactions' %}
+                                #00bf63
+                            {% elif txn.source_table == 'reserved_transactions' %}
+                               #d32f2f 
+                            {% elif txn.source_table == 'cancelled_transactions' %}
+                                #888888
+                            {% else %}
+                                #000
+                            {% endif %}
+                        ">
+                          {{txn.status}}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+
+
+        </div>
+    </main>
+
+   <div id="transactionModal" class="modal">
+        <div class="Modal-Content" style="width: 350px; text-align:center;">
+            <p>What kind of transaction?</p>
+            <div style="margin-top:20px;">
+                <button id="Walk-In" style="margin-right:10px; background-color:#00bf63;">Walk-In</button>
+                <button id="Reservation" style="background-color:#e7a200;">Reservation</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutModal" class="modal">
+        <div class="Modal-Content" style="width: 350px; text-align:center;">
+            <p>Are you sure you want to logout?</p>
+            <div style="margin-top:20px;">
+                <button id="Logout" onclick="window.location.href='/'"
+                    style="margin-right:10px; background-color:#d32f2f;">Logout</button>
+                <button id="Cancel" style="background-color:#555;">Cancel</button>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- ================= EXPORT MODAL ================= -->
+<div id="exportModal" class="modal">
+    <div class="Modal-Content" style="width:350px;text-align:center;">
+        <p style="font-weight:bold;">Export as</p>
+        <div style="margin-top:20px;display:flex;flex-direction:column;gap:10px;">
+            <button onclick="exportCSV()">CSV</button>
+            <button onclick="exportExcel()">Excel (.xlsx)</button>
+            <button onclick="exportPDF()">PDF</button>
+        </div>
+        <button onclick="closeExportModal()" style="margin-top:15px;">Cancel</button>
+    </div>
+</div>
+
+    <script src="../static/scripts/logout.js"></script>
+    <script>
+            
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const searchInput = document.getElementById("search");
+            const fromDateInput = document.getElementById("FromDate");
+            const toDateInput = document.getElementById("ToDate");
+            const rows = document.querySelectorAll("tbody tr");
+            fromDateInput.addEventListener('focus', function () {
+                this.value = '';
+            }, { once: true });
+
+            function filterTable() {
+                const searchValue = searchInput.value.toLowerCase();
+
+                const fromDate = fromDateInput.value ? new Date(fromDateInput.value) : null;
+                const toDate   = toDateInput.value ? new Date(toDateInput.value) : null;
+
+                function formatMMDDYY(date) {
+                    if (!date) return null;
+                    const mm = String(date.getMonth() + 1).padStart(2, '0');
+                    const dd = String(date.getDate()).padStart(2, '0');
+                    const yy = String(date.getFullYear()).slice(-2);
+                    return `${mm}/${dd}/${yy}`;
+                }
+
+                const fromDateFormatted = formatMMDDYY(fromDate);
+                const toDateFormatted   = formatMMDDYY(toDate);
+
+                if (!searchValue.length){
+                        fromDateInput.value = "";
+                    }
+
+                rows.forEach(row => {
+                    const cellsText = row.innerText.toLowerCase();
+
+                    // Date column (3rd column)
+                    const dateText = row.children[2].innerText; // MM/DD/YY
+                    const rowDate = new Date(dateText);
+                    
+                    let matchesSearch = cellsText.includes(searchValue);
+                    let matchesFromDate = !fromDateFormatted || dateText.includes(fromDateFormatted);
+                    let matchesToDate = !toDateFormatted || dateText.includes(toDateFormatted);
+
+                    console.log(dateText, fromDateFormatted, toDateFormatted, matchesFromDate, matchesFromDate)
+
+                    row.style.display =
+                        matchesSearch && matchesFromDate && matchesToDate
+                            ? ""
+                            : "none";
+                });
+            }
+
+            searchInput.addEventListener("input", filterTable);
+            fromDateInput.addEventListener("change", filterTable);
+            toDateInput.addEventListener("change", filterTable);
+        });
+
+        // function openTransactionModal(transactionId, sourceTable) {
+        //     if (sourceTable === 'transactions') {
+        //         window.location.href = `./dashboard/form/${transactionId}`;
+        //     } else if (sourceTable === 'reserved_transactions') {
+        //         window.location.href = `./dashboard/reservation/form/${transactionId}`;
+        //     } else if (sourceTable === 'cancelled_transactions') {
+        //         // optional: handle cancelled
+        //         alert('This transaction is cancelled');
+        //     }
+        // }
+
+        function openTransactionModal(transactionId, sourceTable) {
+    if (sourceTable === 'transactions') {
+        window.location.href = `/dashboard/form/${transactionId}`;
+    } 
+    else if (sourceTable === 'reserved_transactions') {
+        window.location.href = `/dashboard/reservation/form/${transactionId}`;
+    } 
+    else if (sourceTable === 'cancelled_transactions') {
+        alert('This transaction is cancelled');
+    }
+}
+
+        const addBtn = document.getElementById("Add");
+        const modal = document.getElementById("transactionModal");
+        const walkInBtn = document.getElementById("Walk-In");
+        const reservationBtn = document.getElementById("Reservation");
+        
+        function openReserveModal(){
+            modal.classList.add("show");
+        }
+        walkInBtn.addEventListener("click", function () {
+            window.location.href = '/dashboard/form';
+        });
+
+        reservationBtn.addEventListener("click", function () {
+            window.location.href = "/dashboard/reservation";
+        });
+
+        modal.addEventListener("click", function (e) {
+            if (e.target === modal) {
+                modal.classList.remove("show");
+            }
+        });
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const table = document.getElementById("transactiontable");
+    const rows = table.querySelectorAll("tbody tr");
+
+    let total = 0;
+    let count = 0;
+    let mtdTotal = 0;
+
+    const today = new Date();
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+    rows.forEach(row => {
+        const netCell = row.cells[5]; // Net Billing
+        const dateCell = row.cells[2]; // Datetime
+        const statusCell = row.cells[7]; // Status (optional filter)
+
+        if (!netCell || !dateCell) return;
+
+        // Parse Net Billing
+        const amount = parseFloat(
+            netCell.textContent.replace("₱", "").replace(/,/g, "").trim()
+        );
+        if (isNaN(amount)) return;
+
+        total += amount;
+        count++;
+
+        // Parse Datetime (format: MM/DD/YY hh:mm AM/PM)
+        const dateStr = dateCell.textContent.trim();
+        const parts = dateStr.match(/(\d{2})\/(\d{2})\/(\d{2})/);
+        if (!parts) return;
+
+        let month = parseInt(parts[1], 10) - 1; // JS months 0-11
+        let day = parseInt(parts[2], 10);
+        let year = parseInt(parts[3], 10);
+        year += (year < 100 ? 2000 : 0); // convert YY -> YYYY
+
+        const txnDate = new Date(year, month, day);
+
+        // Check if transaction is in current month
+        if (txnDate >= startOfMonth && txnDate <= today) {
+            mtdTotal += amount;
+        }
+    });
+
+    const average = count > 0 ? total / count : 0;
+
+    document.getElementById("TotalSummary").textContent =
+        `₱${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+    document.getElementById("Average").textContent =
+        `₱${average.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+    document.getElementById("TotalTransaction").textContent = count;
+    document.getElementById("MTDTotal").textContent =
+        `₱${mtdTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.5.29/dist/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+function openExportModal() { document.getElementById("exportModal").classList.add("show"); }
+function closeExportModal() { document.getElementById("exportModal").classList.remove("show"); }
+
+// Collect table + summary data
+function getExportData() {
+    const rows = document.querySelectorAll("#transactiontable tbody tr");
+    const data = [];
+
+    // Add summary at top
+    data.push(["Total Sales", document.getElementById("TotalSummary").innerText]);
+    data.push(["MTD Total", document.getElementById("MTDTotal").innerText]);
+    data.push(["Total Transactions", document.getElementById("TotalTransaction").innerText]);
+    data.push(["Average", document.getElementById("Average").innerText]);
+    data.push([]); // empty row before table
+
+    // Add table headers
+    const headers = [...document.querySelectorAll("#transactiontable thead th")].map(th => th.innerText.trim());
+    data.push(headers);
+
+    // Add table rows
+    rows.forEach(row => {
+        if (row.style.display === "none") return;
+        const rowData = [...row.children].map(td => {
+            let text = td.innerText.trim();
+            // Ensure peso sign for Net Billing column (6th column)
+            if(td.cellIndex === 5 && !text.startsWith("₱")) text = "₱" + text;
+            return text;
+        });
+        data.push(rowData);
+    });
+
+    return data;
+}
+
+/* ===== CSV ===== */
+function exportCSV() {
+    const data = getExportData();
+    if (data.length <= 6) { alert("No data to export"); return; }
+    const csv = data.map(r => r.map(v => `"${v.replace(/"/g,'""')}"`).join(",")).join("\n");
+    downloadFile(csv, "POS_Transactions.csv", "text/csv;charset=utf-8;");
+}
+
+/* ===== Excel ===== */
+function exportExcel() {
+    const data = getExportData();
+    const ws = XLSX.utils.aoa_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Transactions");
+    XLSX.writeFile(wb, `POS_Transactions_${new Date().toISOString().slice(0,10)}.xlsx`);
+    closeExportModal();
+}
+
+/* ===== PDF ===== */
+function exportPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF("l","pt","a4");
+    const data = getExportData();
+
+    // Summary at top with 'P' instead of peso sign
+    let y = 30;
+    for(let i=0; i<4; i++){
+        const value = data[i][1].replace("₱", "P "); // replace peso sign with P
+        doc.text(`${data[i][0]}: ${value}`, 40, y);
+        y += 20;
+    }
+
+    // Table data after empty row
+    const tableData = data.slice(5);
+    const headers = [tableData.shift()]; // first row is headers
+
+    // Ensure Net Billing column uses 'P'
+    const cleanTable = tableData.map(row => {
+        return row.map((cell, idx) => {
+            if(idx === 5){ // Net Billing
+                return cell.replace("₱", "P");
+            }
+            return cell;
+        });
+    });
+
+    doc.autoTable({
+        startY: y + 10,
+        head: headers,
+        body: cleanTable,
+        styles: { fontSize: 8 }
+    });
+
+    doc.save(`POS_Transactions_${new Date().toISOString().slice(0,10)}.pdf`);
+    closeExportModal();
+}
+
+
+function downloadFile(content, fileName, mimeType) {
+    const blob = new Blob([content], { type: mimeType });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = fileName;
+    a.click();
+    closeExportModal();
+}
+</script>
+
+
+
+
+
+
+</body>
+
+</html>

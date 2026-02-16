@@ -1,0 +1,348 @@
+main {
+    background-color: #2e3841;
+
+    width: 80%;
+    height: 100%;
+
+    border-radius: 10px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    padding: 20px;
+}
+
+p {
+    overflow: auto;
+}
+
+.Header-Main-Container {
+    width: 100%;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.Header-Main-Container-V2 {
+    overflow: hidden;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    width: 100%;
+}
+#TotalSummary, #MTDTotal, #TotalTransaction, #Average{
+    font-size: 1vw;
+}
+.head2>label{
+    font-size: 0.75vw;
+}
+
+.InputUser {
+    background-color: #fff;
+    color: #111;
+
+    border: #111 solid 1px;
+    border-radius: 5px;
+
+    outline: none;
+
+    padding: 12px 20px;
+}
+
+.Main-Container {
+    background-color: #e8ecf2;
+
+    margin-top: 10px;
+
+    border-radius: 10px;
+
+    padding: 10px;
+
+    width: 100%;
+    height: 82%;
+    overflow: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8vw;
+    
+}
+
+th,
+td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+td {
+    background: #f5f5f5;
+}
+th {
+    position: sticky;
+    top: 0;
+    background: #fff; 
+    z-index: 0;
+}
+
+.View {
+    color: #5477c1;
+
+    font-weight: 900;
+
+    cursor: pointer;
+
+    text-decoration: underline;
+}
+
+#Logout {
+    background-color: #d32f2f;
+}
+
+#Cancel {
+    background-color: #555;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    justify-content: center;
+    align-items: center;
+}
+
+.Modal-Content {
+    background: #fff;
+    width: fit-content;
+    padding: 20px;
+    border-radius: 6px;
+}
+
+.Modal-Content>p {
+    color: #111;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.Modal-Container {
+    margin-top: 10px;
+
+    display: flex;
+    gap: 10px;
+}
+
+.Modal-Input {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.Modal-Input-Container {
+    display: flex;
+    flex-direction: column;
+}
+
+.Modal-Input-Container>label {
+    color: #636363;
+    font-style: italic;
+}
+
+.Modal-Input-Container input {
+    padding: 10px;
+    border: #111 solid 1px;
+    outline: none;
+    background-color: #b5b5b5;
+}
+
+.Modal-Input-Container select {
+    padding: 10px;
+    border: #111 solid 1px;
+    outline: none;
+    background-color: #b5b5b5;
+}
+
+.TextArea {
+    resize: none;
+
+    padding: 10px;
+
+    background-color: #b5b5b5;
+}
+
+.modal-footer {
+    margin-top: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    gap: 20px;
+}
+
+.modal-footer>button {
+    padding: 10px;
+
+    width: 150px;
+
+    border: none;
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+}
+
+#guestModal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+#guestModal .Modal-Content {
+    background-color: #fff;
+    margin: auto;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    max-height: 80vh;
+    overflow-y: auto;
+    width: 800px;
+}
+
+#guestModal p {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+#guestTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#guestTable th,
+#guestTable td {
+    border: 1px solid #0a1836;
+    padding: 8px;
+    text-align: left;
+    font-size: 14px;
+}
+
+#guestTable th {
+    background-color: #041c4e;
+    color: #fff;
+}
+
+#guestModal .modal-footer {
+    text-align: right;
+    margin-top: 10px;
+}
+
+#guestTable tbody {
+    display: block;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+#guestTable thead,
+#guestTable tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+#guestTable tbody tr input,
+#guestTable tbody tr select {
+    width: 100%;
+    padding: 4px;
+    box-sizing: border-box;
+}
+
+#ADDguestModal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+#ADDguestModal .Modal-Content {
+    background-color: #fff;
+    margin: auto;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    max-height: 80vh;
+    overflow-y: auto;
+    width: 800px;
+}
+
+#ADDguestModal p {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+#ADDguestTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#ADDguestTable th,
+#ADDguestTable td {
+    border: 1px solid #0a1836;
+    padding: 8px;
+    text-align: left;
+    font-size: 14px;
+}
+
+#ADDguestTable th {
+    background-color: #041c4e;
+    color: #fff;
+}
+
+#ADDguestModal .modal-footer {
+    text-align: right;
+    margin-top: 10px;
+}
+
+#ADDguestTable tbody {
+    display: block;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+#ADDguestTable thead,
+#ADDguestTable tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+#ADDguestTable tbody tr input,
+#ADDguestTable tbody tr select {
+    width: 100%;
+    padding: 4px;
+    box-sizing: border-box;
+}

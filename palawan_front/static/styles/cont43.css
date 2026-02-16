@@ -1,0 +1,119 @@
+html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #111; /* letterbox background */
+}
+
+.cont43 {
+    aspect-ratio: 4 / 3;
+    width: min(100vw, calc(100vh * 4 / 3));
+    height: min(100vh, calc(100vw * 3 / 4));
+    background: white;
+    overflow: auto;
+    display: flex;
+    background-color: #111; /* letterbox background */
+}
+
+/* Hide the actual checkbox */
+.Additional-Input input[type="checkbox"] {
+    display: none;
+}
+
+/* Style the label/span as a button */
+.Additional-Input span {
+    display: inline-block;
+    padding: 5px 10px;
+    margin: 5px;
+    border: 1px solid #888;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    background-color: #f9f9f9;
+}
+
+/* Hover effect */
+.Additional-Input span:hover {
+    border-color: #4CAF50;
+    background-color: #e8f5e9;
+}
+
+/* Checked state */
+.Additional-Input input[type="checkbox"]:checked + span {
+    background-color: #4CAF50;
+    border-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+}
+
+.Additional-Content{
+    width: 100%;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal.show {
+    display: flex;
+}
+
+#transactionModal .Modal-Content {
+    background-color: #fff;
+    margin: auto;
+    padding: 20px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    max-width: 500px;
+    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+}
+
+#transactionModal p {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+#transactionModal button {
+    padding: 12px;
+    width: 100px;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#transactionModal #Walk-In {
+    background-color: #d32f2f;
+}
+
+#transactionModal #Walk-In:hover {
+    background-color: #b71c1c;
+}
+
+#transactionModal #Reservation {
+    background-color: #555;
+}
+
+#transactionModal #Reservation:hover {
+    background-color: #333;
+}

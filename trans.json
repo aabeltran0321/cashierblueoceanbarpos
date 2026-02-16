@@ -1,0 +1,39 @@
+{
+    "add_on_guest": [
+        {
+            "name": "Jane Doe 1"
+        },
+        {
+            "name": "Jane Doe 2"
+        },
+        {
+            "name": "Jane Doe 3"
+        }
+    ],
+    "capacity": 4,
+    "contact_number": "09171234567",
+    "created_at": "Fri, 13 Feb 2026 15:07:46 GMT",
+    "customer_name": "John Doe",
+    "discount": "50.00",
+    "id": 3,
+    "location": "skydeck",
+    "services_availed": [
+        {
+            "service": "Dinner",
+            "unit_price": 500
+        }
+    ],
+    "status": "Pending",
+    "tableID": 1,
+    "tableName": "TBL1",
+    "table_assigned": null,
+    "total_amount_paid": "500.00",
+    "total_billing": "500.00",
+    "total_change": "50.00",
+    "totalnetbilling": "450.00",
+    "transaction_id": "TXN001",
+    "type_of_payment": "Cash"
+}
+
+[{"service": "CheeseBurger", "unit_price": 500, "qty":5},
+{"service": "Spaghetti", "unit_price": 300, "qty":10}]

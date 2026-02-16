@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Point of Sale</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/form.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/cont43.css') }}">>
+</head>
+
+<body>
+    <div class="cont43">
+    <main>
+        <div class="Guest-Container">
+            <div class="Guest-Input">
+                <label for="FirstName">First Name</label>
+                <input type="text" name="FirstName" id="FirstName" value="{{ transaction.customer_name}}" readonly>
+            </div>
+            <div class="Guest-Input">
+                <label for="LastName">Last Name</label>
+                <input type="text" name="LastName" id="LastName" value="{{ transaction.last_name }}" readonly>
+            </div>
+            <div class="Guest-Input">
+                <label for="Contact">Contact #:</label>
+                <input type="number" inputmode="numeric" pattern="[0-9]*" name="Contact" id="Contact" value="{{ transaction.contact_number }}" readonly>
+            </div>
+            <div class="Guest-Input">
+                <label for="EmailAddress">Email Address</label>
+                <input type="email" name="EmailAddress" id="EmailAddress" value="{{ transaction.email_address }}" readonly>
+            </div>
+            <div class="Guest-Input">
+                <label for="IDType">ID Type:</label>
+                <select name="IDType" id="IDType" disabled>
+                    <option value="">Select ID Type</option>
+                    {% for id_type in ["Passport", "National Id", "Driver License", "Voter Id", "Student Id", "Others Gov ID"] %}
+                    <option value="{{ id_type }}" {% if transaction.id_card_type == id_type %}selected{% endif %}>{{ id_type }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="Guest-Input">
+                <label for="IDNumber">ID Number</label>
+                <input type="text" id="IDNumber" name="IDNumber" inputmode="numeric" pattern="[0-9]*" value="{{ transaction.id_number }}" readonly>
+            </div>
+
+            <span style="text-align: center; font-weight: 600; font-size: 20px;">Sales Invoice </span>
+            <div class="Guest-Input">
+                <div class="form-group">
+                    <input type="checkbox" id="isPWD" name="isPWD">
+                    <label for="isPWD" style="font-size: 1.5vh;">Discount for Senior Citizen and PWD?</label>
+                    
+                </div>
+
+                <div class="form-group" id="pwdIdContainer" style="display:none;">
+                    <label for="pwd_id_no" style="font-size: 1.5vh;">Discount ID Number</label>
+                    <input type="text" id="pwd_id_no" name="pwd_id_no" placeholder="Enter your PWD ID" style="font-size: 1.5vh;">
+                </div>
+            </div>
+
+            <div class="Guest-Input">
+                <label for="TotalBilling">Total Billing (₱)</label>
+                <p name="TotalBilling" id="TotalBilling">0.0</p>
+            </div>
+            <div class="Guest-Input">
+                <label for="Discount">Discount (%)</label>
+                <p name="Discount" id="Discount">{{transaction.discount}}</p>
+            </div>
+            <div class="Guest-Input">
+                <label for="TotalAmountPaid">Total Net Billing (₱)</label>
+                <p name="TotalNetBilling" id="TotalNetBilling">{{transaction.totalnetbilling}}</p>
+            </div>
+            <div class="Guest-Input">
+                <label for="TotalAmountPaid">Total Amount Paid (₱)</label>
+                <p name="TotalAmountPaid" id="TotalAmountPaid">{{ transaction.total_amount_paid }}</p>
+            </div>
+
+            <div class="Guest-Input">
+                <label for="TotalChange">Total Change (₱)</label>
+                <p name="TotalChange" id="TotalChange">0.0</p>
+            </div>
+            
+            <div class="Guest-Button">
+                <button style="background-color: #d9d9d9; color: #111;" id="CancelForm">CANCEL</button>
+
+                {% if transaction.status == 'completed' %}
+                            <button style="background-color: #e7a200; color: #fff;" id="PrintForm" onclick="fetchReceipt({{ transaction.transaction_id }});">
+                                PRINT
+                            </button>
+                {% else %}
+                <button style="background-color: #009900; color: #fff;" id="SubmitForm">SUBMIT</button>
+                {% endif %}
+                
+            </div>
+        </div>
+
+        <!-- Additional Guest Section -->
+        <div class="Input-Container">
+            <div class="AddOnGuest-Container">
+                <div class="AddOnGuest-Header">
+                    <div class="AddOnGuest-Header-V2">
+                        <label for="AdultGuest">Adults</label>
+                        <input name="AdultGuest" id="AdultGuest" type="number" value="{{ transaction.add_on_guests | selectattr('guest_type', 'equalto', 'Adult') | list | length }}">
+                        <img src="{{ url_for('static', filename='icons/Plus.png') }}" width="30" height="30" id="PlussAdult">
+                    </div>
+                    <div class="AddOnGuest-Header-V2">
+                        <label for="ChildGuess">Child</label>
+                        <input name="ChildGuess" id="ChildGuess" type="number" value="{{ transaction.add_on_guests | selectattr('guest_type', 'equalto', 'Child') | list | length }}">
+                        <img src="{{ url_for('static', filename='icons/Plus.png') }}" width="30" height="30" id="PlussChild">
+                    </div>
+                    {% if transaction.source_table == 'reserved_transactions'%}
+                   <div class="Additional-Button">
+                            <button style="background-color: #e70000; color: #fff;" id="DeleteForm">
+                                DELETE
+                            </button>
+                    </div>
+                    {% endif %}
+                    
+                </div>
+                
+
+                <div class="AddOnGuest-Body">
+                    <table id="GuestTable">
+                        <thead>
+                            <tr>
+                                <th style="width: 5%;">No.</th>
+                                <th style="width: 30%;">Name</th>
+                                <th style="width: 10%;">Guest Type</th>
+                                <th style="width: 20%; display:none;" >ID Card Type</th>
+                                <th style="width: 20%; display:none;">ID Number</th>
+                                <th style="width: 10%;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for guest in transaction.add_on_guests %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td><input type="text" style="padding: 5px; width:100%;" placeholder="Guest Name" value="{{ guest.name }}"></td>
+                                <td>{{ guest.guest_type }}</td>
+                                <td style="display:none;">
+                                    <select style="padding: 3px; cursor: pointer;">
+                                        <option value="">Select ID Type</option>
+                                        {% for id_type in ["Passport", "National Id", "Driver License", "Voter Id", "Student Id", "Others Gov ID"] %}
+                                        <option value="{{ id_type }}" {% if guest.id_card_type == id_type %}selected{% endif %}>{{ id_type }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td style="display:none;"><input type="text" style="padding: 5px;" placeholder="ID Number" value="{{ guest.id_number }}"></td>
+                                <td style="cursor:pointer;">
+                                    <img src="{{ url_for('static', filename='icons/delete-bin-fill.png') }}" width="24" height="24" class="deleteRow">
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Additional Services Section -->
+            <br>
+            <div class="Additional-Container">
+                <div class="Additional-Content">
+                    <div class="Additional-Input">
+                        <p>Cottages</p>
+                        {% for service in transaction.services_avail %}
+                            {% if "Cottage" in service.title %}
+                            <span>
+                                <input type="checkbox" id="{{ service.idname }}" {% if service.checked %}checked{% endif %}>
+                                {{ service.name }} ₱{{ service.price }}
+                            </span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="Additional-Input">
+                        <p>Private Casas</p>
+                        {% for service in transaction.services_avail %}
+                            {% if "Casa" in service.name %}
+                            <span>
+                                <input type="checkbox" id="{{ service.idname }}" {% if service.checked %}checked{% endif %}>
+                                {{ service.name }} ₱{{ service.price }}
+                            </span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="Additional-Content">
+                    <div class="Additional-Input">
+                        <p>Bed & Breakfast</p>
+                        {% for service in transaction.services_avail %}
+                            {% if "Suite" in service.name or "Clique" in service.name %}
+                            <span>
+                                <input type="checkbox" id="{{ service.idname }}" {% if service.checked %}checked{% endif %}>
+                                {{ service.name }} ₱{{ service.price }}
+                            </span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="Additional-Input">
+                        <p>Party & Events</p>
+                        {% for service in transaction.services_avail %}
+                            {% if "Chapel" in service.name or "Event Dome" in service.name %}
+                            <span>
+                                <input type="checkbox" id="{{ service.idname }}" {% if service.checked %}checked{% endif %}>
+                                {{ service.name }} ₱{{ service.price }}
+                            </span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="Additional-Content">
+                    <div class="Additional-Input-v3">
+                        <p>Rentable</p>
+                        {% for rent in transaction.rentables_avail %}
+                        <div class="Additional-Input-V2">
+                            <label for="{{ rent.idname }}">{{ rent.name }} ₱{{ rent.price }}/pc</label>
+                            <input name="{{ rent.idname }}" id="{{ rent.idname }}" type="number" value="{{ rent.quantity }}">
+                            <img src="{{ url_for('static', filename='icons/Plus.png') }}" width="30" height="30" id="Add{{ rent.idname }}">
+                            <img src="{{ url_for('static', filename='icons/Minus.png') }}" width="30" height="30" id="Minus{{ rent.idname }}">
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main></div>
+
+    <!-- Include your JS scripts here as before -->
+
+    <script>
+        
+        const CancelForm = document.getElementById('CancelForm');
+        CancelForm.addEventListener('click', function() {
+            location.href = "/dashboard";  // fixed typo in "dashboard"
+        });
+        document.getElementById('isPWD').checked = {{ transaction.isPWD }};
+        document.getElementById('isPWD').readOnly = true;
+        if (document.getElementById('isPWD').checked){
+            document.getElementById('pwdIdContainer').style.display = 'block';
+            document.getElementById('pwd_id_no').value = "{{ transaction.pwd_id_no }}";
+            document.getElementById('pwd_id_no').readOnly = true;
+        }
+
+         document.querySelectorAll('input').forEach(function(input) {
+            input.readOnly = true;
+        });
+
+        document.getElementById('TotalBilling').textContent = "{{ transaction.total_billing }}"
+        document.getElementById('Discount').textContent = "{{ transaction.discount }}"
+        const isPWDCheckbox = document.getElementById('isPWD');
+        if(isPWDCheckbox.checked ){
+            discount_pcnt = 1 - ((parseFloat("{{ transaction.discount }}") + 20 ) /100);
+        }
+        else{
+            discount_pcnt = 1 - parseFloat("{{ transaction.discount }}")/100;
+        }
+            
+        const total = {{ transaction.total_billing }};
+        const totalnet = total * discount_pcnt;
+        document.getElementById('TotalNetBilling').textContent = `${totalnet.toFixed(2)}`;
+        document.getElementById('TotalChange').textContent = parseFloat("{{ transaction.total_amount_paid }}") - parseFloat(document.getElementById('TotalNetBilling').textContent);
+        document.querySelectorAll('.Additional-Input span').forEach(span => {
+        const checkbox = span.querySelector('input[type="checkbox"]');
+        
+        // Optional: alert checkbox id
+        // alert(checkbox.id);
+
+        // Set the initial checked state (if you want to toggle, keep as below)
+        span.classList.toggle('checked', checkbox.checked);
+
+        // Apply active style based on checked state
+        if (checkbox.checked) {
+            span.style.backgroundColor = '#4CAF50';
+            span.style.borderColor = '#4CAF50';
+            span.style.color = 'white';
+            span.style.fontWeight = 'bold';
+        } else {
+            span.style.backgroundColor = '#f9f9f9';
+            span.style.borderColor = '#888';
+            span.style.color = 'initial';
+            span.style.fontWeight = 'normal';
+        }
+    });
+
+    function fetchReceipt(index) {
+        window.location.href= `../receipt/${index}`;
+    }
+        
+    </script>
+    
+</body>
+</html>
