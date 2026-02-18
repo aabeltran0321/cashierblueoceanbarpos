@@ -65,7 +65,7 @@
         </div>
 
         <div class="flex bg-bgPanel rounded-lg p-1 space-x-1 border border-gray-800">
-            <div onclick="window.location.href='../waiter/recreationactivity'"
+            <div onclick="window.location.href='{{url_for ('waiter_tablemanagement')}}'"
                 class="px-6 py-1.5 rounded text-textGray text-sm font-medium hover:bg-white/5 cursor-pointer flex items-center gap-2 transition-colors">
                 Back
             </div>
@@ -216,7 +216,7 @@
 
                 <div class="space-y-3 mb-6 text-sm">
                     <div class="text-gray-300">Mode: Consumables</div>
-                    <div class="text-gray-300">Customer Name / ID | Table 01</div>
+                    <div class="text-gray-300">{{txn.customer_name}} / {{txn.transaction_id}} | {{txn.table_assigned}}</div>
                     <div class="text-gray-300 border-b border-gray-700 pb-3 mb-2" id="confirm-date">--</div>
 
                     <div class="flex justify-between items-end">
@@ -404,12 +404,12 @@
                 card.innerHTML = `
             <div class="w-full h-24 bg-gray-800 overflow-hidden">
                 <img src="/static/images/${item.photo_url}" 
-                     alt="${item.menu_name}" 
+                     alt="${item.activity_name}" 
                      class="w-full h-full object-cover"
                      onerror="this.src='/static/images/icon.jpg'">
             </div>
             <div class="p-3 flex flex-col justify-between flex-grow">
-                <span class="text-xs font-semibold leading-tight mb-2">${item.menu_name}</span>
+                <span class="text-xs font-semibold leading-tight mb-2">${item.activity_name}</span>
                 <div class="flex justify-between items-end">
                     <span class="text-[10px] opacity-70 uppercase tracking-wide">${currentCategory}</span>
                     <span class="text-sm font-bold text-white">P ${item.unit_price}</span>
@@ -426,7 +426,7 @@
             editingItemIndex = index;
 
             document.getElementById('modalCategory').innerText = currentCategory;
-            document.getElementById('modalItemName').innerText = item.menu_name;
+            document.getElementById('modalItemName').innerText = item.activity_name;
             document.getElementById('modalItemPrice').innerText = 'P ' + item.unit_price.toFixed(2);
 
             if (index !== null) {
@@ -512,7 +512,7 @@
 
                 row.innerHTML = `
                     <div class="flex-grow flex flex-col">
-                        <span class="font-bold text-gray-200"><span class="text-purple-400">x${item.qty}</span> ${item.menu_name}</span>
+                        <span class="font-bold text-gray-200"><span class="text-purple-400">x${item.qty}</span> ${item.activity_name}</span>
                         ${item.note ? `<span class="text-xs text-gray-400 italic">Note: ${item.note}</span>` : ''}
                     </div>
                     <span class="font-bold text-green-400">P ${itemTotal.toFixed(2)}</span>
@@ -545,7 +545,7 @@
                     <div class="flex gap-4">
                         <span class="text-gray-400 w-6 text-right">x${item.qty}</span>
                         <div>
-                            <span class="text-gray-200">${item.menu_name}</span>
+                            <span class="text-gray-200">${item.activity_name}</span>
                             ${item.note ? `<div class="text-xs text-gray-500">${item.note}</div>` : ''}
                         </div>
                     </div>
@@ -563,34 +563,50 @@
             document.getElementById('confirmModal').classList.add('hidden');
         }
 
-        function submitFinalOrder() {
-            const payload = {
-                table: "Table 01",
-                items: cart,
-                total: document.getElementById('total-price').innerText
-            };
+function submitFinalOrder() {
+    const txn_db_id = {{ txn.get('id') | tojson if txn and txn.get('id') else 'null' }};
+    
+    if (!txn_db_id) {
+        showCustomAlert("Error", "Transaction not found for this table.", "error");
+        return;
+    }
+    const payload = {
+        id: txn_db_id, // uses the DB id of the transaction
+        services_availed: cart.map(item => ({
+            menu_id: item.id,
+            menu_name: item.activity_name,
+            unit_price: item.unit_price,
+            qty: item.qty,
+            note: item.note
+        })),
+        total_amount_paid: parseFloat(document.getElementById('total-price').innerText.replace('P ', '')),
+        status: "Pending"  // or "Completed" if finalizing
+    };
 
-            fetch('/process_order', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === "success") {
-                        closeConfirmationModal();
-                        
-                        // CHANGED: Replaced alert with custom modal
-                        showCustomAlert("Order Successful", "Transaction ID: " + data.transaction_id, "success");
-                        
-                        clearCart();
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                    showCustomAlert("Error", "Something went wrong processing the order.", "error");
-                });
+    console.log(payload);
+
+    fetch('/process_order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            closeConfirmationModal();
+            showCustomAlert(
+                "Order Placed",
+                `Transaction updated. Total: P ${data.computed.totalnetbilling}`,
+                "success"
+            );
+            clearCart();
+            window.location.reload(); // refresh to update table status
+        } else {
+            showCustomAlert("Error", data.message, "error");
         }
+    })
+    .catch(err => showCustomAlert("Error", "Something went wrong.", "error"));
+}
 
         // --- UTILS ---
         function updateDate() {

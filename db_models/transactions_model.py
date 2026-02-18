@@ -63,6 +63,42 @@ def get_transaction(id=None):
         cursor.close()
         conn.close()
 
+def get_pending_transactions():
+    """
+    Fetch all transactions where status is 'Pending'.
+    """
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    try:
+        cursor.execute("SELECT * FROM transactions WHERE status = %s", ("Pending",))
+        result = cursor.fetchall()
+
+        for row in result:
+            # Decode JSON fields if they exist
+            if row.get("services_availed"):
+                row["services_availed"] = json.loads(row["services_availed"])
+            if row.get("add_on_guest"):
+                row["add_on_guest"] = json.loads(row["add_on_guest"])
+
+            # Convert Decimal fields to float for Jinja formatting
+            row["total_billing"] = float(row["total_billing"])
+            row["discount"] = float(row["discount"])
+            row["totalnetbilling"] = float(row["totalnetbilling"])
+            row["total_amount_paid"] = float(row["total_amount_paid"])
+            row["total_change"] = float(row["total_change"])
+
+        return result
+
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+
 def get_transaction_by_transaction_id(transaction_id):
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
@@ -156,7 +192,7 @@ def post_transaction(data):
         # Update table status
         if data.get("table_assigned"):
             cursor.execute(
-                "UPDATE table_management SET status = 'Pending' WHERE tableID = %s",
+                "UPDATE table_management SET status = 'Occupied' WHERE tableID = %s",
                 (data.get("table_assigned"),)
             )
 
@@ -286,7 +322,7 @@ def put_transaction(id, data):
         total_change = total_amount_paid - totalnetbilling
 
   
-        new_status = "Completed" if total_amount_paid >= totalnetbilling else "Pending"
+        new_status = data.get('status')
 
    
         new_table = data.get("table_assigned") or existing_row["table_assigned"]
@@ -294,7 +330,6 @@ def put_transaction(id, data):
         sql_query = """
         UPDATE transactions
         SET
-            transaction_id = %s,
             customer_name = %s,
             contact_number = %s,
             table_assigned = %s,
@@ -311,7 +346,6 @@ def put_transaction(id, data):
         """
 
         values = [
-            data.get("transaction_id") if data.get("transaction_id") is not None else existing_row["transaction_id"],
             data.get("customer_name") if data.get("customer_name") is not None else existing_row["customer_name"],
             data.get("contact_number") if data.get("contact_number") is not None else existing_row["contact_number"],
             new_table,
@@ -323,7 +357,7 @@ def put_transaction(id, data):
             total_amount_paid,
             total_change,
             data.get("type_of_payment") if data.get("type_of_payment") is not None else existing_row["type_of_payment"],
-            new_status,
+            new_status or "Pending",
             id
         ]
 

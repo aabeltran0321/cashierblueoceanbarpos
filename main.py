@@ -17,6 +17,15 @@ from db_models.recreational_activities_model import get_recreational_activity, p
 from db_models.decks_model import get_deck, post_deck, put_deck, delete_deck
 from db_models.orders_model import get_order, post_order, put_order, delete_order
 from db_models.table_guest_model import get_table_guest
+from db_models.login_model import employee_login
+from db_models.employee_model import get_employee, post_employee, put_employee, delete_employee
+from db_models.main_menu_model import get_main_menu,  get_main_menu_category, post_main_menu, put_main_menu, delete_main_menu
+from db_models.table_management_model import get_table, post_table, put_table, delete_table
+from db_models.transactions_model import get_transaction, get_pending_transactions, get_transaction_by_transaction_id, post_transaction, put_transaction,delete_transaction
+from db_models.recreational_activities_model import get_recreational_activity, get_recreational_activities_with_transaction, post_recreational_activity, put_recreational_activity, put_recreational_activity_transaction_status, delete_recreational_activity
+from db_models.decks_model import get_deck, post_deck, put_deck, delete_deck
+from db_models.orders_model import get_order, post_order, put_order, delete_order
+from db_models.table_guest_model import get_table_guest, get_all_table_guest
 app = Flask(__name__)
 CORS(app)
 
@@ -387,6 +396,7 @@ def get_transaction_by_receipt_route(transaction_id=None):
 
 @app.route("/transactions", methods=["POST"])
 def post_transaction_route():
+
     try:
         data = request.get_json()
 
@@ -397,7 +407,7 @@ def post_transaction_route():
             }), 400
 
         result = post_transaction(data=data)
-        
+        print(result)
 
         if result["status"] == "success":
             return jsonify(result), 201
@@ -725,6 +735,10 @@ def login():
             
             elif user["role"] == "Staff" and user["department"] == "Floating Bar":
                 return redirect(url_for('cashier_tablemanagement'))
+            
+            elif user["role"] == "Waiter" and user["department"] == "Floating Bar":
+                return redirect(url_for('waiter_tablemanagement'))
+
 
         else:
             return render_template("indexv2.html", error="Invalid Login")
@@ -748,31 +762,108 @@ def menu():
     return render_template("menu.html", menu_categories=menu_categories)
 
 
-@app.route('/process_order/<int:id>', methods=['PUT'])
-def process_order(id):
-    try:
-        data = request.get_json()
-        if not data or "services_availed" not in data:
-            return jsonify({"status": "error", "message": "No services provided"}), 400
-        update_data = {
-            "services_availed": data.get("services_availed"),
-            "table_assigned": data.get("table_assigned"),
-        }
+# @app.route('/process_order/<int:id>', methods=['PUT'])
+# def process_order(id):
+#     try:
+#         data = request.get_json()
+#         if not data or "services_availed" not in data:
+#             return jsonify({"status": "error", "message": "No services provided"}), 400
+#         update_data = {
+#             "services_availed": data.get("services_availed"),
+#             "table_assigned": data.get("table_assigned"),
+#         }
 
-        result = put_transaction(id=id, data=update_data)
+#         result = put_transaction(id=id, data=update_data)
 
-        return jsonify(result)
+#         return jsonify(result)
 
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)})
+#     except Exception as e:
+#         return jsonify({"status": "error", "message": str(e)})
     
 # --------------------------------
 #         Arjun WAITER
 # -------------------------------
 @app.route('/waiter/recreationalactivity')
 def waiter_recrational_activity():
-    return render_template("recreationalactivity.html")
+    pending_transactions = get_pending_transactions()
+    print("Pending transactions: ", pending_transactions)
+    return render_template("waiter/recreationalactivity.html", transactions = pending_transactions)
 
+
+@app.route("/waiter/pending_transactions")
+def waiter_pending_transactions():
+    pending_transactions = get_pending_transactions()  # Returns a list of dicts
+    print("Pending transactions:", pending_transactions)  # Debug line
+    return render_template(
+        "waiter/pending_transactions.html",
+        transactions=pending_transactions
+    )
+
+
+@app.route("/waiter/recreationalctivitymenu/<int:id>")
+def recreationactivitymenu(id):
+    main_menu = get_recreational_activity()
+    txn = get_transaction(id=id)
+    menu_categories = {}
+    for a in main_menu:
+        if a['category'] not in menu_categories.keys():
+            menu_categories[a['category']] = [a,]
+        else:
+            menu_categories[a['category']].append(a)
+    print(menu_categories)
+    return render_template("/waiter/recreationalctivitymenu.html", menu_categories=menu_categories, txn= txn)
+
+
+
+@app.route('/waiter/tablemanagement')
+def waiter_tablemanagement():
+    tables = get_table()  # get all tables (optional, for layout)
+    table_transactions = get_all_table_guest()  # {tableID: txn_dict}
+
+    return render_template(
+        "waiter/tablemanagement.html",
+        tables=tables,
+        table_transactions=table_transactions
+    )
+
+@app.route("/waiter/tablemanagementmenu/<int:table_id>")
+def tablemanagementmenu(table_id):
+
+    main_menu = get_main_menu()
+    txn = get_table_guest(table_id)  # fetch transaction for this ID
+    menu_categories = {}
+    for a in main_menu:
+        if a['category'] not in menu_categories:
+            menu_categories[a['category']] = [a]
+        else:
+            menu_categories[a['category']].append(a)
+
+    print("txn:", txn)
+    return render_template("/waiter/tablemanagementmenu.html", menu_categories=menu_categories, txn=txn)
+
+
+
+
+
+@app.route("/process_order", methods=["POST"])
+def process_order():
+    data = request.get_json()   
+
+    print(data)
+
+    print("data:",data)
+    txn_id = data.get("id")
+
+    if not txn_id:
+        return jsonify({"status": "error", "message": "Transaction ID (id) is missing"})
+
+    result = put_transaction(txn_id, {
+        "services_availed": data.get("services_availed", []),
+        "total_amount_paid": data.get("total_amount_paid"),
+        "status": data.get("status")
+    })
+
+    return jsonify(result)
 
 # --------------------------------
 #         Arjun floating bar cashier
@@ -803,8 +894,9 @@ def mainland_tablemanagement():
         if row_table['transaction_id'] is not None:
             transaction = get_transaction_by_transaction_id(row_table['transaction_id'])
             if transaction['status'] == "Pending":
+                transaction['totalServicesAvailed'] = 0
                 for service in transaction['services_availed'][1:]:
-                    transaction['totalnetbilling'] += (service['unit_price']*service['qty'])
+                    transaction['totalServicesAvailed'] += (float(service['unit_price'])*float(service['qty']))
             row_table.update(transaction)
 
     #print(tables)

@@ -65,7 +65,7 @@
         </div>
 
         <div class="flex bg-bgPanel rounded-lg p-1 space-x-1 border border-gray-800">
-            <div onclick="window.location.href='../waiter/tablemanagement'"
+            <div onclick="window.location.href='/waiter/tablemanagement'"
                 class="px-6 py-1.5 rounded text-textGray text-sm font-medium hover:bg-white/5 cursor-pointer flex items-center gap-2 transition-colors">
                 Back
             </div>
@@ -77,7 +77,7 @@
 
         <div class="flex items-center space-x-3 bg-[#0f1115] px-3 py-1.5 rounded-full border border-gray-700">
             <div class="w-8 h-8 rounded-full bg-yellow-600 overflow-hidden">
-                <img src="../static/images/error.jpeg" class="w-full h-full object-cover"
+                <img src="" class="w-full h-full object-cover"
                     onerror="this.src='https://i.pravatar.cc/150?img=12'">
             </div>
             <div onclick="openLogoutModal()" class="cursor-pointer flex flex-col pr-2">
@@ -216,7 +216,7 @@
 
                 <div class="space-y-3 mb-6 text-sm">
                     <div class="text-gray-300">Mode: Consumables</div>
-                    <div class="text-gray-300">Customer Name / ID | Table 01</div>
+                    <div class="text-gray-300">{{txn.customer_name}} / ID | Table 01</div>
                     <div class="text-gray-300 border-b border-gray-700 pb-3 mb-2" id="confirm-date">--</div>
 
                     <div class="flex justify-between items-end">
@@ -292,7 +292,10 @@
         </div>
     </div>
 
+
+
     <script>
+        
         // --- NEW: CUSTOM ALERT LOGIC ---
         function showCustomAlert(title, message, type = 'success') {
             const modal = document.getElementById('customAlertModal');
@@ -399,11 +402,20 @@
                 const card = document.createElement('div');
                 card.className = `${colorClass} rounded-lg flex flex-col cursor-pointer hover:opacity-95 hover:scale-[1.02] transition shadow-lg overflow-hidden border border-gray-700`;
                 // CLICK OPENS MODAL NOW
-                card.onclick = () => openItemModal(item);
+               card.onclick = () => {
+                // Add 1 to cart immediately
+                const existing = cart.find(i => i.menu_id === item.menu_id);
+                if (existing) {
+                    existing.qty += 1;
+                } else {
+                    cart.push({ ...item, qty: 1, note: '' });
+                }
+                renderCart();
+            };
 
                 card.innerHTML = `
             <div class="w-full h-24 bg-gray-800 overflow-hidden">
-                <img src="/static/images/${item.photo_url}" 
+                <img src="" 
                      alt="${item.menu_name}" 
                      class="w-full h-full object-cover"
                      onerror="this.src='/static/images/icon.jpg'">
@@ -427,7 +439,7 @@
 
             document.getElementById('modalCategory').innerText = currentCategory;
             document.getElementById('modalItemName').innerText = item.menu_name;
-            document.getElementById('modalItemPrice').innerText = 'P ' + item.unit_price.toFixed(2);
+            document.getElementById('modalItemPrice').innerText = 'P ' + item.unit_price;
 
             if (index !== null) {
                 // Editing existing
@@ -562,35 +574,55 @@
         function closeConfirmationModal() {
             document.getElementById('confirmModal').classList.add('hidden');
         }
+      
 
-        function submitFinalOrder() {
-            const payload = {
-                table: "Table 01",
-                items: cart,
-                total: document.getElementById('total-price').innerText
-            };
 
-            fetch('/process_order', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === "success") {
-                        closeConfirmationModal();
-                        
-                        // CHANGED: Replaced alert with custom modal
-                        showCustomAlert("Order Successful", "Transaction ID: " + data.transaction_id, "success");
-                        
-                        clearCart();
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                    showCustomAlert("Error", "Something went wrong processing the order.", "error");
-                });
+function submitFinalOrder() {
+    const txn_db_id = {{ txn.get('id') | tojson if txn and txn.get('id') else 'null' }};
+    
+    if (!txn_db_id) {
+        showCustomAlert("Error", "Transaction not found for this table.", "error");
+        return;
+    }
+    const payload = {
+        id: txn_db_id, // uses the DB id of the transaction
+        services_availed: cart.map(item => ({
+            menu_id: item.menu_id,
+            menu_name: item.menu_name,
+            unit_price: item.unit_price,
+            qty: item.qty,
+            note: item.note
+        })),
+        total_amount_paid: parseFloat(document.getElementById('total-price').innerText.replace('P ', '')),
+        status: "Pending"  // or "Completed" if finalizing
+    };
+
+    console.log(payload);
+
+    fetch('/process_order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            closeConfirmationModal();
+            showCustomAlert(
+                "Order Placed",
+                `Transaction updated. Total: P ${data.computed.totalnetbilling}`,
+                "success"
+            );
+            clearCart();
+            window.location.reload(); // refresh to update table status
+        } else {
+            showCustomAlert("Error", data.message, "error");
         }
+    })
+    .catch(err => showCustomAlert("Error", "Something went wrong.", "error"));
+}
+
+
 
         // --- UTILS ---
         function updateDate() {
@@ -600,5 +632,6 @@
             document.getElementById('header-date').innerText = dateStr;
         }
     </script>
+    
 </body>
 </html>

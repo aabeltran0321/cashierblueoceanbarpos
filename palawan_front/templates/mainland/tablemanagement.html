@@ -182,7 +182,7 @@
                         {% set total_consumable = (table.capacity|float) * (deck_prices[table.location]|float) %}
                         <div class="flex flex-col gap-1 text-center">
                             <p class="text-[12px] text-statusGreen">Consumables:<br>Php{{ '{:,.2f}'.format(total_consumable) }}</p>
-                            {% set remaining = total_consumable|float - table.totalnetbilling|float %}
+                            {% set remaining = total_consumable|float - table.totalServicesAvailed|float %}
                             <p class="text-[12px] text-statusRed">Remaining:<br>Php{{ '{:,.2f}'.format(remaining) }}</p>
                         </div>
                     {% endif %}
@@ -363,6 +363,24 @@
         </div>
     </div>
 
+
+    <div id="universalerrorModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
+        <div class="bg-bgPanel w-full max-w-sm rounded-lg shadow-2xl overflow-hidden relative border border-gray-700 transform transition-all scale-100">
+            <div class="p-6 flex flex-col items-center text-center">
+                <div class="w-14 h-14 bg-red-500/10 rounded-full flex items-center justify-center mb-4 border border-red-500/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2" id="universalerrortitle">Payment Incomplete</h3>
+                <p class="text-sm text-gray-300 mb-6" id="universalerrormessage">
+                    The amount you entered is less than the total due. Please provide a sufficient amount to proceed with the payment.
+                </p>
+                <button onclick="closeAlert()" class="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-semibold text-sm transition shadow-lg">OK</button>
+            </div>
+        </div>
+    </div>
+
     <div id="confirmModal"
         class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
         <div class="bg-bgPanel w-full max-w-md rounded-lg shadow-2xl overflow-hidden relative border border-gray-700">
@@ -392,11 +410,11 @@
                     <div class="text-gray-300 border-b border-gray-700 pb-3 mb-2">02/16/2026 | 02:45 PM</div>
 
                     <div class="flex justify-between items-end">
-                        <span class="text-gray-400">Total Amount</span>
+                        <span class="text-gray-400">Total Net Billing</span>
                         <span class="text-lg font-semibold text-white" id="confirmTotal">P 0.00</span>
                     </div>
                     <div class="flex justify-between items-end">
-                        <span class="text-gray-400">Cash Tendered</span>
+                        <span class="text-gray-400">Amount Paid</span>
                         <span class="text-lg font-semibold text-white" id="confirmTendered">P 0.00</span>
                     </div>
                     <div class="flex justify-between items-end mt-2 pt-2 border-t border-gray-700">
@@ -413,6 +431,28 @@
             </div>
         </div>
     </div>
+
+    <div id="loadingModal"
+     class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
+    <div class="bg-bgPanel w-full max-w-sm rounded-lg shadow-2xl overflow-hidden relative border border-gray-700 flex flex-col items-center justify-center p-8">
+
+        <!-- Optional: remove close button or keep disabled -->
+        <!--
+        <button onclick="hideLoading()"
+                class="absolute top-4 right-4 text-white/70 hover:text-white z-10 p-2 rounded-full hover:bg-white/10 transition-colors">
+            ✕
+        </button>
+        -->
+
+        <!-- Spinner -->
+        <div class="w-16 h-16 border-4 border-white/20 border-t-white rounded-full animate-spin mb-6"></div>
+
+        <!-- Message -->
+        <h2 class="text-xl font-semibold text-center text-white">Processing...</h2>
+        <p class="text-gray-400 text-sm mt-2 text-center">Please wait while we complete your transaction.</p>
+    </div>
+</div>
+
 
     <div id="successModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
         <div class="bg-bgPanel w-full max-w-sm rounded-lg shadow-2xl overflow-hidden relative border border-gray-700 transform transition-all scale-100">
@@ -738,6 +778,54 @@
   </div>
 </div>
 
+<div id="loadingModal"
+     class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
+    <div class="bg-bgPanel w-full max-w-sm rounded-lg shadow-2xl overflow-hidden relative border border-gray-700 flex flex-col items-center justify-center p-8">
+
+        <!-- Optional: remove close button or keep disabled -->
+        <!--
+        <button onclick="hideLoading()"
+                class="absolute top-4 right-4 text-white/70 hover:text-white z-10 p-2 rounded-full hover:bg-white/10 transition-colors">
+            ✕
+        </button>
+        -->
+
+        <!-- Spinner -->
+        <div class="w-16 h-16 border-4 border-white/20 border-t-white rounded-full animate-spin mb-6"></div>
+
+        <!-- Message -->
+        <h2 class="text-xl font-semibold text-center text-white">Processing...</h2>
+        <p class="text-gray-400 text-sm mt-2 text-center">Please wait while we complete your transaction.</p>
+    </div>
+</div>
+
+<!-- Universal Alert Modal -->
+<div id="alertModal"
+     class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
+    <div class="bg-bgPanel w-full max-w-md rounded-lg shadow-2xl overflow-hidden relative border border-gray-700 flex flex-col items-center justify-center p-6">
+
+        <!-- Icon / Status -->
+        <div id="alertIcon" class="mb-4 text-white text-4xl">
+            <!-- You can dynamically inject an icon here -->
+            ⚠️
+        </div>
+
+        <!-- Title -->
+        <h2 id="alertTitle" class="text-xl font-semibold text-center text-white mb-2">Alert</h2>
+
+        <!-- Message -->
+        <p id="alertMessage" class="text-gray-400 text-center text-sm mb-6">This is an alert message.</p>
+
+        <!-- Button -->
+        <button onclick="closeAlertModal()"
+                class="px-6 py-2 bg-gradient-to-r from-accentPurple to-accentDark hover:from-accentDark hover:to-accentPurple text-white rounded-lg font-medium shadow-lg transition-all">
+            OK
+        </button>
+    </div>
+</div>
+
+
+
     <script>
         // --- LOGOUT LOGIC ---
         function openLogoutModal() {
@@ -806,7 +894,7 @@
             var tableDataSelected = null;
             for (let i=0; i<tableData.length; i++){
                 if (tableData[i].tableID === parseInt(id)){
-                    console.log(tableData[i]);
+                    // console.log(tableData[i]);
                     tableDataSelected = tableData[i];
                     break;
                 }
@@ -827,7 +915,7 @@
             var tableDataSelected = null;
             for (let i=0; i<tableData.length; i++){
                 if (tableData[i].tableID === parseInt(id)){
-                    console.log(tableData[i]);
+                    // console.log(tableData[i]);
                     tableDataSelected = tableData[i];
                     break;
                 }
@@ -908,7 +996,7 @@
                     AvailableorderList.innerHTML += 
                     `<div class="flex justify-between border-b pt-2 pb-2 border-gray-800 flex-none">
                         <h3 class="text-lg font-bold ">Payment Summary</h3> 
-                        <button class="active-press bg-statusGreen text-white rounded font-bold text-s hover:bg-green-600 flex items-center justify-center shadow-[0_0_15px_rgba(22,163,74,0.3)] p-2 transition-all" onclick="postTransaction();">SUBMIT</button>
+                        <button class="active-press bg-statusGreen text-white rounded font-bold text-s hover:bg-green-600 flex items-center justify-center shadow-[0_0_15px_rgba(22,163,74,0.3)] p-2 transition-all" onclick="postTransaction('${id}');">SUBMIT</button>
                     </div>
                     <div class="bg-bgPanel p-3 rounded-lg border border-gray-800 mt-3 space-y-2">
 
@@ -1047,70 +1135,132 @@
             updateNumpad();
         }
 
-        function OpenModalPending(id){
-            
-
-            var tableDataSelected = null;
-            for (let i=0; i<tableData.length; i++){
-                if (tableData[i].tableID === parseInt(id)){
-                    console.log(tableData[i]);
-                    tableDataSelected = tableData[i];
-                    break;
-                }
-
-                
-            }
-            const deck_prices1 = {{ deck_prices | tojson }};
-            const multiplier = deck_prices1[tableDataSelected.location];
-            // modalTableId.innerText = id === 'VIP' ? 'VIP Table | Spec' : `Table ${id} | Spec`;
-
-            document.getElementById("modalTableId").innerText = `${tableDataSelected.tableName} Specification`;
-
-            document.getElementById("modalDeckSelected").innerText = tableDataSelected.location.toUpperCase();
-            document.getElementById("mainGuest").value = tableDataSelected.customer_name;
-            document.getElementById("mainGuestcontact").value = tableDataSelected.contact_number;
-
-            document.getElementById("modalTransactionID").innerText = `Order No: ${tableDataSelected.transaction_id}`
-
-            document.getElementById("modalAddGuest").innerHTML = "";
-
-            const remaining = tableDataSelected.capacity * multiplier;
-
-            for (let j=0; j<tableDataSelected.capacity-1; j++){
-                document.getElementById("modalAddGuest").innerHTML +=`<input type="text" value="${tableDataSelected.add_on_guest[j].name}"
-                                class="w-full bg-bgInput border border-gray-700 rounded-lg p-3 text-sm focus:border-accentPurple focus:outline-none text-white transition-colors">`
-            }
-
-
-            orderList.innerHTML = `<div class="bg-bgPanel p-3 rounded-lg flex justify-between items-center border border-gray-800">
-                <div>
-                    <div class="font-medium text-white">${tableDataSelected.location.toUpperCase()} FEE </div>
-                    <div class="text-xs text-textGray">Qty: ${tableDataSelected.capacity}</div>
-                </div>
-                <div class="font-bold text-green-400">P ${remaining.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-            </div>`;
-
-
-            var total_billing = remaining;
-            for (let k =1; k<tableDataSelected.services_availed.length; k++){
-
-                const total_price = tableDataSelected.services_availed[k]['unit_price']*tableDataSelected.services_availed[k]['qty'];
-                total_billing += total_price;
-                orderList.innerHTML += `<div class="bg-bgPanel p-3 rounded-lg flex justify-between items-center border border-gray-800">
-                <div>
-                    <div class="font-medium text-white">${tableDataSelected.services_availed[k]['service']}  </div>
-                    <div class="text-xs text-textGray">Qty: ${tableDataSelected.services_availed[k]['qty']}</div>
-                </div>
-                <div class="font-bold text-green-400">P ${total_price.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-            </div>`;
-            }
-
-            //document.getElementById("totalDisplay").innerText = `P ${total_billing.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-            
-            modalOverlayPending.classList.remove('hidden');
-            // resetToDefaultState();
-            updateNumpad();
+        function OpenModalPending(id) {
+    let tableDataSelected = null;
+    for (let i = 0; i < tableData.length; i++) {
+        if (tableData[i].tableID === parseInt(id)) {
+            tableDataSelected = tableData[i];
+            break;
         }
+    }
+
+    const deck_prices1 = {{ deck_prices | tojson }};
+    const multiplier = deck_prices1[tableDataSelected.location];
+
+    // Set table & deck info
+    document.getElementById("modalTableId").innerText = `${tableDataSelected.tableName} Specification`;
+    document.getElementById("modalDeckSelected").innerText = tableDataSelected.location.toUpperCase();
+    document.getElementById("mainGuest").value = tableDataSelected.customer_name;
+    document.getElementById("mainGuestcontact").value = tableDataSelected.contact_number;
+    document.getElementById("modalTransactionID").innerText = `Order No: ${tableDataSelected.transaction_id}`;
+
+    // Add-on guests
+    document.getElementById("modalAddGuest").innerHTML = "";
+    for (let j = 0; j < tableDataSelected.add_on_guest.length; j++) {
+        document.getElementById("modalAddGuest").innerHTML += `
+            <input type="text" value="${tableDataSelected.add_on_guest[j].name}"
+                class="w-full bg-bgInput border border-gray-700 rounded-lg p-3 text-sm focus:border-accentPurple focus:outline-none text-white transition-colors">`;
+    }
+
+    // Render Paid Section (Boat Ride & Entrance Fee for reference)
+    orderList.innerHTML = `
+        <h3 class="text-m font-bold">Paid (Mainland)</h3> 
+        <div class="bg-bgPanel p-3 rounded-lg flex justify-between items-center border border-gray-800 mb-2">
+            <div>
+                <div class="font-medium text-white">Boat Ride Fee</div>
+                <div class="text-xs text-textGray">Unit Price: ${deck_prices1.boatride}</div>
+                <div class="text-xs text-textGray">Qty: ${tableDataSelected.capacity}</div>
+            </div>
+            <div class="font-bold text-gray-400">PAID</div>
+        </div>
+        <div class="bg-bgPanel p-3 rounded-lg flex justify-between items-center border border-gray-800 mb-2">
+            <div>
+                <div class="font-medium text-white">Entrance Fee</div>
+                <div class="text-xs text-textGray">Unit Price: ${deck_prices1.entrancefee}</div>
+                <div class="text-xs text-textGray">Qty: ${tableDataSelected.capacity}</div>
+            </div>
+            <div class="font-bold text-gray-400">PAID</div>
+        </div>
+    `;
+
+    // Wallet and Floating Bar Calculation
+    const prepaidCredit = tableDataSelected.capacity * deck_prices1[tableDataSelected.location]; // total prepaid consumables
+    let totalConsumption = 0;
+
+    if (tableDataSelected.services_availed.length) {
+        orderList.innerHTML += `<h3 class="text-m font-bold">To Settle (Floating Bar)</h3>`;
+        for (let k = 1; k < tableDataSelected.services_availed.length; k++) {
+            const service = tableDataSelected.services_availed[k];
+            const total_price = service.unit_price * service.qty;
+            totalConsumption += total_price;
+
+            orderList.innerHTML += `
+                <div class="bg-bgPanel p-3 rounded-lg flex justify-between items-center border border-gray-800 mb-2">
+                    <div>
+                        <div class="font-medium text-white">${service.menu_name}</div>
+                        <div class="text-xs text-textGray">Unit Price: ${service.unit_price}</div>
+                        <div class="text-xs text-textGray">Qty: ${service.qty}</div>
+                    </div>
+                    <div class="font-bold text-green-400">P ${total_price.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                </div>`;
+        }
+    }
+
+    // Calculate remaining balance / spillage
+    const remainingBalance = prepaidCredit - totalConsumption;
+    const spillage = remainingBalance < 0 ? Math.abs(remainingBalance) : 0;
+    const netBilling = spillage; // only spillage is payable
+    const amountPaid = 0;
+    const totalChange = amountPaid - netBilling;
+
+    // Render Payment Summary
+    orderList.innerHTML += `
+        <div class="flex justify-between border-b pt-2 pb-2 border-gray-800 flex-none">
+            <h3 class="text-lg font-bold">Payment Summary</h3> 
+            <button class="active-press bg-statusGreen text-white rounded font-bold text-s hover:bg-green-600 flex items-center justify-center shadow-[0_0_15px_rgba(22,163,74,0.3)] p-2 transition-all" onclick="postTransaction('${id}');">SUBMIT</button>
+        </div>
+        <div class="bg-bgPanel p-3 rounded-lg border border-gray-800 mt-3 space-y-2">
+
+            <div class="flex justify-between">
+                <span class="text-textGray font-medium">Prepaid Consumables Credit:</span>
+                <span class="font-bold text-green-400">P ${prepaidCredit.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            </div>
+
+            <div class="flex justify-between">
+                <span class="text-textGray font-medium">Total Consumption:</span>
+                <span class="font-bold text-green-400">P ${totalConsumption.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            </div>
+
+            <div class="flex justify-between">
+                <span class="text-textGray font-medium">Remaining Credit:</span>
+                <span class="font-bold ${remainingBalance >=0 ? 'text-green-400' : 'text-red-400'}">
+                    P ${remainingBalance.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </span>
+            </div>
+
+            <div class="flex justify-between">
+                <span class="text-textGray font-medium">Excess Charges (Spillage):</span>
+                <span class="font-bold text-red-400">P ${spillage.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            </div>
+
+            <div class="flex justify-between">
+                <span class="text-textGray font-medium">Amount Paid:</span>
+                <span class="font-bold text-purple-400" onclick="openPaymentModal();" style="cursor:pointer; text-decoration:underline;">
+                    P ${amountPaid.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </span>
+            </div>
+
+            <div class="flex justify-between">
+                <span class="text-textGray font-medium">Total Change:</span>
+                <span class="font-bold text-green-400">P ${totalChange.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            </div>
+        </div>
+    `;
+
+    modalOverlayPending.classList.remove('hidden');
+    updateNumpad();
+}
+
 
         function resetToDefaultState() {
             currentInput = '';
@@ -1127,28 +1277,28 @@
 
         // --- CONFIRMATION & PAYMENT LOGIC ---
 
-        function showConfirmation() {
-            if (currentTotal === 0) {
-                alert("Order is empty.");
-                return;
-            }
+        // function showConfirmation() {
+        //     if (currentTotal === 0) {
+        //         alert("Order is empty.");
+        //         return;
+        //     }
 
-            const tendered = currentInput === '' ? 0 : parseFloat(currentInput);
+        //     const tendered = currentInput === '' ? 0 : parseFloat(currentInput);
             
-            // ERROR CHECK: Tendered < Total
-            if (tendered < currentTotal) {
-                errorModal.classList.remove('hidden');
-                return;
-            }
+        //     // ERROR CHECK: Tendered < Total
+        //     if (tendered < currentTotal) {
+        //         errorModal.classList.remove('hidden');
+        //         return;
+        //     }
 
-            const change = tendered - currentTotal;
+        //     const change = tendered - currentTotal;
 
-            confirmTotal.innerText = 'P ' + currentTotal.toLocaleString('en-US', { minimumFractionDigits: 2 });
-            confirmTendered.innerText = 'P ' + tendered.toLocaleString('en-US', { minimumFractionDigits: 2 });
-            confirmChange.innerText = 'P ' + (change > 0 ? change : 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
+        //     confirmTotal.innerText = 'P ' + currentTotal.toLocaleString('en-US', { minimumFractionDigits: 2 });
+        //     confirmTendered.innerText = 'P ' + tendered.toLocaleString('en-US', { minimumFractionDigits: 2 });
+        //     confirmChange.innerText = 'P ' + (change > 0 ? change : 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
 
-            confirmModal.classList.remove('hidden');
-        }
+        //     confirmModal.classList.remove('hidden');
+        // }
 
         function hideConfirmation() {
             confirmModal.classList.add('hidden');
@@ -1513,49 +1663,73 @@ function submitDiscountInput() {
 
 
 <script>
-    
 
-async function postTransaction() {
+async function postTransaction(id) {
+    var tableDataSelected = null;
+            for (let i=0; i<tableData.length; i++){
+                if (tableData[i].tableID === parseInt(id)){
+                    // console.log(tableData[i]);
+                    tableDataSelected = tableData[i];
+                    break;
+                }
+
+                
+            }
+    
     try {
         // Collect main guest info
+
+        
         const customer_name = document.getElementById("AvailablemainGuest").innerText.trim();
         const contact_number = document.getElementById("AvailablemainGuestcontact").innerText.trim();
-
+        if (customer_name === "Insert Name Here"){
+            showAlert("Invalid Customer Name", "Insert Correct Customer Name")
+            return;
+        }
+        if (contact_number === "E.g. 09123456789"){
+            showAlert("Invalid Contact Number", "Insert Contact Number")
+            return;
+        }
         // Collect add-on guests dynamically
         const add_on_guest = [];
-        let i = 0;
-        while(document.getElementById(`addon_guestInput${i}`)) {
-            const val = document.getElementById(`addon_guestInput${i}`).value.trim();
-            if(val) add_on_guest.push(val);
-            i++;
+        for(let kk=0;kk<tableDataSelected.capacity-1;kk++){
+            const val = document.getElementById(`addon_guestInput${kk}`).value;
+            console.log(kk,val)
+            add_on_guest.push({ name: val });  // ✅ push object
         }
+        
 
         // Collect amounts and convert using pesotoFloat
-        const total_billing = pesotoFloat(document.getElementById("totalBillText").innerText);
+        const total_billing1 = pesotoFloat(document.getElementById("totalBillText").innerText);
         const discount = pesotoFloat(document.getElementById("discountPercentText").innerText);
         const totalnetbilling = pesotoFloat(document.getElementById("netBillingText").innerText);
         const total_amount_paid = pesotoFloat(document.getElementById("amountPaidText").innerText);
         const total_change = pesotoFloat(document.getElementById("totalChangeText").innerText);
 
+        if (total_change<0){
+            showAlert("Payment Incomplete", "The amount you entered is less than the total due. Please provide a sufficient amount to proceed with the payment.")
+            return;
+        }
+
         // Collect services availed if you have them in JS
         const services_availed = []; // Populate this if needed, e.g., from a list of checkboxes/items
-
+        showLoading();
         const data = {
-            transaction_id: `TRX-${Date.now()}`, // Example transaction ID
+            transaction_id: `T${Date.now().toString().slice(-6)}`, // Example transaction ID
             customer_name,
             contact_number,
-            table_assigned: document.getElementById("tableAssigned")?.innerText || null,
+            table_assigned: tableDataSelected.tableID,
             services_availed,
             add_on_guest,
-            total_billing,
+            total_billing:total_billing1,
             discount,
             totalnetbilling,
             total_amount_paid,
             total_change,
-            type_of_payment: document.getElementById("paymentType")?.value || "Cash",
+            type_of_payment: "Cash",
             status: "Pending"
         };
-
+        console.log(data);
         const response = await fetch("/transactions", {
             method: "POST",
             headers: {
@@ -1567,16 +1741,67 @@ async function postTransaction() {
         const result = await response.json();
 
         if(response.ok){
-            console.log("Transaction successful:", result);
+            openAlertModal("Transaction successful", result.message,'✓');
+            
+            
         } else {
-            console.error("Transaction failed:", result);
+            showAlert("Transaction failed:", result.message);
         }
-
+        hideLoading();
     } catch (err) {
-        console.error("Error posting transaction:", err);
+        showAlert("Error posting transaction:", err);
+        hideLoading();
     }
 }
+
+function showLoading() {
+    document.getElementById('loadingModal').classList.remove('hidden');
+}
+
+function hideLoading() {
+    document.getElementById('loadingModal').classList.add('hidden');
+}
 </script>
+<script>
+    function showAlert(title, message) {
+        const modal = document.getElementById("universalerrorModal");
+        const modalTitle = document.getElementById("universalerrortitle");
+        const modalMessage = document.getElementById("universalerrormessage");
+
+        modalTitle.textContent = title || "Notice";
+        modalMessage.textContent = message || "";
+
+        modal.classList.remove("hidden");
+    }
+
+    function closeAlert() {
+        document.getElementById("universalerrorModal")
+                .classList.add("hidden");
+    }
+
+    // Optional: close when clicking backdrop
+    document.getElementById("universalerrorModal")
+        .addEventListener("click", function (e) {
+            if (e.target === this) closeAlert();
+        });
+
+        function openAlertModal(title, message, icon = "⚠️") {
+    document.getElementById('alertTitle').textContent = title;
+    document.getElementById('alertMessage').textContent = message;
+    document.getElementById('alertIcon').textContent = icon;
+    document.getElementById('alertModal').classList.remove('hidden');
+}
+
+// Close the universal alert modal
+function closeAlertModal() {
+    document.getElementById('alertModal').classList.add('hidden');
+    if(document.getElementById('alertTitle').textContent === "Transaction successful"){
+        window.location.reload();
+}
+    }
+    
+</script>
+
 </body>
 
 

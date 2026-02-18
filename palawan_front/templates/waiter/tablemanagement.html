@@ -94,10 +94,11 @@
             <div class="h-8 w-px bg-gray-800"></div>
 
             <div class="relative group">
-                <select class="appearance-none bg-bgPanel border border-gray-700 text-white py-2 pl-4 pr-10 rounded-lg text-sm font-bold focus:outline-none focus:border-accentPurple hover:border-gray-500 transition-colors cursor-pointer shadow-lg">
-                    <option value="sky">Sky Deck</option>
-                    <option value="lower">Lower Deck</option>
-                </select>
+   <select id="deckSelect"
+        class="appearance-none bg-bgPanel border border-gray-700 text-white py-2 pl-4 pr-10 rounded-lg text-sm font-bold focus:outline-none focus:border-accentPurple hover:border-gray-500 transition-colors cursor-pointer shadow-lg">
+    <option value="sky" selected>Sky Deck</option>
+    <option value="lower">Main Deck</option>
+</select>
                 <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-textGray group-hover:text-white transition-colors">
                     <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
                 </div>
@@ -109,7 +110,7 @@
                 class="bg-accentPurple text-white px-6 py-1.5 rounded text-sm font-bold shadow-lg flex items-center gap-2">
                 Table Management
             </div>
-            <div onclick="window.location.href='../waiter/recreationactivity'"
+            <div onclick="window.location.href='{{ url_for('waiter_recrational_activity') }}'"
                 class="px-6 py-1.5 rounded text-textGray text-sm font-medium hover:bg-white/5 cursor-pointer flex items-center gap-2 transition-colors">
                 Recreational Activities
             </div>
@@ -127,143 +128,63 @@
         </div>
     </header>
 
-    <main class="flex-1 relative overflow-hidden flex flex-col">
-        <div class="flex justify-end px-8 py-4 space-x-6 text-xs font-medium text-gray-400">
-            <div class="flex items-center gap-2"><span
-                    class="w-2 h-2 rounded-full bg-statusGray shadow-[0_0_8px_rgba(82,82,91,0.5)]"></span> Available
-            </div>
-            <div class="flex items-center gap-2"><span
-                    class="w-2 h-2 rounded-full bg-statusOrange shadow-[0_0_8px_rgba(234,88,12,0.5)]"></span> Reserved
-            </div>
-            <div class="flex items-center gap-2"><span
-                    class="w-2 h-2 rounded-full bg-accentPurple shadow-[0_0_8px_rgba(220,38,38,0.5)]"></span> Occupied
-            </div>
+<main class="flex-1 relative overflow-hidden flex flex-col">
+
+    <!-- Legend -->
+    <div class="flex justify-end px-8 py-4 space-x-6 text-xs font-medium text-gray-400">
+        <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-statusGray shadow-[0_0_8px_rgba(82,82,91,0.5)]"></span> Occupied
         </div>
-
-        <div class="flex-1 overflow-y-auto no-scrollbar p-6">
-            <div class="grid grid-cols-5 gap-y-8 gap-x-10 max-w-6xl mx-auto pb-20 px-8">
-
-                <div onclick="openModal()"
-                    class="flex flex-col justify-around py-2 active-press relative w-full aspect-[3/4] max-w-[150px] border-2 border-accentPurple rounded-2xl flex items-center justify-center bg-bgPanel hover:bg-white/5 cursor-pointer mx-auto group shadow-[0_0_15px_rgba(220,38,38,0.1)]">
-                    <div class="chair chair-left pos-1 border-accentPurple"></div>
-                    <div class="chair chair-left pos-2 border-accentPurple"></div>
-                    <div class="chair chair-right pos-1 border-accentPurple"></div>
-                    <div class="chair chair-right pos-2 border-accentPurple"></div>
-                    <p class="text-[12px]">TX-JSBDKSSV20</p>
-                    <div
-                        class="w-16 h-16 bg-white rounded-full flex items-center justify-center text-black font-bold text-2xl group-hover:scale-110 transition-transform">
-                        01</div>
-                    <div class="flex flex-col gap-1 text-center">
-                        <p class="text-[12px] text-statusGreen">Total: Php2,500</p>
-                        <p class="text-[10px] text-statusRed"> Remaining: Php2,500</p>
-                    </div>
-                </div>
-
-                <div onclick="openModal()"
-                    class="flex flex-col justify-around py-2 active-press relative w-full aspect-[3/4] max-w-[150px] border-2 border-accentPurple rounded-2xl flex items-center justify-center bg-bgPanel hover:bg-white/5 cursor-pointer mx-auto group shadow-[0_0_15px_rgba(220,38,38,0.1)]">
-                    <div class="chair chair-left pos-1 border-accentPurple"></div>
-                    <div class="chair chair-left pos-2 border-accentPurple"></div>
-                    <div class="chair chair-right pos-1 border-accentPurple"></div>
-                    <div class="chair chair-right pos-2 border-accentPurple"></div>
-                    <p class="text-[12px]">TX-JSBDKSSV20</p>
-                    <div
-                        class="w-16 h-16 bg-white rounded-full flex items-center justify-center text-black font-bold text-2xl group-hover:scale-110 transition-transform">
-                        02</div>
-                    <div class="flex flex-col gap-1 text-center">
-                        <p class="text-[12px] text-statusGreen">Total: Php2,500</p>
-                        <p class="text-[10px] text-statusRed"> Remaining: Php2,500</p>
-                    </div>
-                </div>
-
-                <div onclick="openModal()"
-                    class="flex flex-col justify-around py-2 active-press relative w-full aspect-[3/4] max-w-[150px] border-2 border-accentPurple rounded-2xl flex items-center justify-center bg-bgPanel hover:bg-white/5 cursor-pointer mx-auto group shadow-[0_0_15px_rgba(220,38,38,0.1)]">
-                    <div class="chair chair-left pos-1 border-accentPurple"></div>
-                    <div class="chair chair-left pos-2 border-accentPurple"></div>
-                    <div class="chair chair-right pos-1 border-accentPurple"></div>
-                    <div class="chair chair-right pos-2 border-accentPurple"></div>
-                    <p class="text-[12px]">TX-JSBDKSSV20</p>
-                    <div
-                        class="w-16 h-16 bg-white rounded-full flex items-center justify-center text-black font-bold text-2xl group-hover:scale-110 transition-transform">
-                        03</div>
-                    <div class="flex flex-col gap-1 text-center">
-                        <p class="text-[12px] text-statusGreen">Total: Php2,500</p>
-                        <p class="text-[10px] text-statusRed"> Remaining: Php2,500</p>
-                    </div>
-                </div>
-
-                <div onclick="openModal()"
-                    class="active-press relative w-full aspect-[3/4] max-w-[150px] border-2 border-statusGray rounded-2xl flex items-center justify-center bg-bgPanel hover:bg-white/5 cursor-pointer mx-auto group">
-                    <div class="chair chair-left pos-1 border-statusGray"></div>
-                    <div class="chair chair-left pos-2 border-statusGray"></div>
-                    <div class="chair chair-right pos-1 border-statusGray"></div>
-                    <div class="chair chair-right pos-2 border-statusGray"></div>
-
-                    <div
-                        class="w-16 h-16 bg-white rounded-full flex items-center justify-center text-black font-bold text-2xl group-hover:scale-110 transition-transform">
-                        04</div>
-                </div>
-
-                <div onclick="openModal()"
-                    class="active-press relative w-full h-full max-w-[150px] border-2 border-statusOrange rounded-2xl flex items-center justify-center bg-bgPanel hover:bg-white/5 cursor-pointer mx-auto row-span-2 group shadow-[0_0_15px_rgba(234,88,12,0.1)]">
-                    <div class="chair chair-left pos-1 border-statusOrange"></div>
-                    <div class="chair chair-left pos-mid border-statusOrange"></div>
-                    <div class="chair chair-left pos-2 border-statusOrange"></div>
-
-                    <div class="chair chair-right pos-1 border-statusOrange"></div>
-                    <div class="chair chair-right pos-mid border-statusOrange"></div>
-                    <div class="chair chair-right pos-2 border-statusOrange"></div>
-
-                    <div
-                        class="w-20 h-20 bg-white rounded-full flex items-center justify-center text-black font-bold text-xl group-hover:scale-110 transition-transform">
-                        VIP</div>
-                </div>
-
-                <div
-                    class="active-press relative w-full aspect-[3/4] max-w-[150px] border-2 border-statusGray rounded-2xl flex items-center justify-center bg-bgPanel hover:bg-white/5 cursor-pointer mx-auto">
-                    <div class="chair chair-left pos-1 border-statusGray"></div>
-                    <div class="chair chair-left pos-2 border-statusGray"></div>
-                    <div class="chair chair-right pos-1 border-statusGray"></div>
-                    <div class="chair chair-right pos-2 border-statusGray"></div>
-                    <div
-                        class="w-16 h-16 bg-white rounded-full flex items-center justify-center text-black font-bold text-2xl">
-                        01</div>
-                </div>
-
-                <div
-                    class="active-press relative w-full aspect-[3/4] max-w-[150px] border-2 border-accentPurple rounded-2xl flex items-center justify-center bg-bgPanel hover:bg-white/5 cursor-pointer mx-auto">
-                    <div class="chair chair-left pos-1 border-accentPurple"></div>
-                    <div class="chair chair-left pos-2 border-accentPurple"></div>
-                    <div class="chair chair-right pos-1 border-accentPurple"></div>
-                    <div class="chair chair-right pos-2 border-accentPurple"></div>
-                    <div
-                        class="w-16 h-16 bg-white rounded-full flex items-center justify-center text-black font-bold text-2xl">
-                        02</div>
-                </div>
-
-                <div
-                    class="active-press relative w-full aspect-[3/4] max-w-[150px] border-2 border-accentPurple rounded-2xl flex items-center justify-center bg-bgPanel hover:bg-white/5 cursor-pointer mx-auto">
-                    <div class="chair chair-left pos-1 border-accentPurple"></div>
-                    <div class="chair chair-left pos-2 border-accentPurple"></div>
-                    <div class="chair chair-right pos-1 border-accentPurple"></div>
-                    <div class="chair chair-right pos-2 border-accentPurple"></div>
-                    <div
-                        class="w-16 h-16 bg-white rounded-full flex items-center justify-center text-black font-bold text-2xl">
-                        03</div>
-                </div>
-
-                <div
-                    class="active-press relative w-full aspect-[3/4] max-w-[150px] border-2 border-statusGray rounded-2xl flex items-center justify-center bg-bgPanel hover:bg-white/5 cursor-pointer mx-auto">
-                    <div class="chair chair-left pos-1 border-statusGray"></div>
-                    <div class="chair chair-left pos-2 border-statusGray"></div>
-                    <div class="chair chair-right pos-1 border-statusGray"></div>
-                    <div class="chair chair-right pos-2 border-statusGray"></div>
-                    <div
-                        class="w-16 h-16 bg-white rounded-full flex items-center justify-center text-black font-bold text-2xl">
-                        04</div>
-                </div>
-            </div>
+        <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-accentPurple shadow-[0_0_8px_rgba(128,0,128,0.5)]"></span> Available
         </div>
-    </main>
+    </div>
+
+    <!-- Tables Container -->
+    <div class="flex-1 overflow-y-auto no-scrollbar p-6">
+        <div id="tablesContainer" class="grid grid-cols-5 gap-y-8 gap-x-10 max-w-6xl mx-auto pb-20">
+
+            {% for i in range(1, 21) %}
+                {% set txn = table_transactions.get(i) %}
+                <div 
+                    class="table-card flex flex-col justify-around py-2 relative w-full aspect-[3/4] max-w-[150px] 
+                        rounded-2xl flex items-center justify-center bg-bgPanel hover:bg-white/5 cursor-pointer mx-auto group shadow-md transition-shadow
+                        border-4 {% if txn %}border-accentPurple{% else %}border-statusGray{% endif %}"
+                    data-table-id="{{ i }}"
+                    data-deck="{% if i <= 10 %}lower{% else %}sky{% endif %}"
+                    {% if i > 10 %}style="display:none"{% endif %}
+                    onclick="openModal({{ i }})"
+                >
+                    <!-- Transaction ID -->
+                    {% if txn %}
+                    <div class="text-[12px] font-bold text-center mb-1 text-white table-transaction-id">
+                        {{ txn.transaction_id }}
+                    </div>
+                    {% endif %}
+
+                    <!-- Table number -->
+                    <div class="table-number w-16 h-16 bg-white rounded-full flex items-center justify-center text-black font-bold text-2xl group-hover:scale-110 transition-transform">
+                        {{ "%02d"|format(i) }}
+                    </div>
+
+                    <!-- Paid / Remaining -->
+                    <div class="flex flex-col gap-1 text-center mt-2">
+                        <p class="text-[12px] text-statusGreen table-paid">{% if txn %}Paid: {{ txn.total_amount_paid }}{% endif %}</p>
+                        <p class="text-[10px] text-statusRed table-remaining">{% if txn %}Remaining: {{ txn.remaining }}{% endif %}</p>
+                    </div>
+
+                    <!-- Chairs -->
+                    <div class="chair chair-left pos-1 {% if txn %}border-accentPurple{% else %}border-statusGray{% endif %}"></div>
+                    <div class="chair chair-left pos-2 {% if txn %}border-accentPurple{% else %}border-statusGray{% endif %}"></div>
+                    <div class="chair chair-right pos-1 {% if txn %}border-accentPurple{% else %}border-statusGray{% endif %}"></div>
+                    <div class="chair chair-right pos-2 {% if txn %}border-accentPurple{% else %}border-statusGray{% endif %}"></div>
+
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+</main>
 
     <!-- MODAL -->
     <div id="logoutModal"
@@ -327,10 +248,31 @@
         }
         updateDate();
 
-        function openModal() {
-            window.location.href = "../waiter/tablemanagementmenu";
-        }
+    
+    const deckSelect = document.getElementById('deckSelect');
 
+
+
+
+
+
+deckSelect.addEventListener('change', function() {
+    const selectedDeck = this.value; // "lower" or "sky"
+    document.querySelectorAll('#tablesContainer .table-card').forEach(card => {
+        card.style.display = card.dataset.deck === selectedDeck ? 'flex' : 'none';
+    });
+});
+
+
+    function openModal(tableId) {
+        
+        const deck = deckSelect.value; 
+        
+        
+
+       
+        window.location.href = "../waiter/tablemanagementmenu/" + tableId;
+    }
     </script>
 </body>
 

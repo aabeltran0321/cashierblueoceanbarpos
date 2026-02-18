@@ -41,3 +41,12 @@
 
 [{"service": "CheeseBurger", "unit_price": 500, "qty":5},
 {"service": "Spaghetti", "unit_price": 300, "qty":10}]
+
+[{"multiplier": 3500, "deck": "skydeck", "boat_ride":500, "entrance_fee":500},
+{"menu_name": "CheeseBurger", "unit_price": 500, "qty":5},
+{"menu_name": "Spaghetti", "unit_price": 300, "qty":10}]
+
+
+[{"multiplier": 3500, "deck": "skydeck", "boatride": 500, "entrancefee": 500},{"menu_id": 3, "menu_name": " Cheeseburger", "unit_price": "120.50", "qty": 1, "note": ""}, {"menu_id": 10, "menu_name": " Cheeseburger", "unit_price": "120.50", "qty": 2, "note": ""}, {"menu_id": 4, "menu_name": "Chocolate Cake", "unit_price": "120.00", "qty": 7, "note": ""}, {"menu_id": 5, "menu_name": "Halo-Halo Special", "unit_price": "95.00", "qty": 6, "note": ""}, {"menu_id": 9, "menu_name": "Mango Shake", "unit_price": "85.00", "qty": 10, "note": ""}]
+
+[{"multiplier": 3500, "deck": "skydeck", "boatride": 500, "entrancefee": 500}, {"menu_name": "CheeseBurger", "unit_price": 500, "qty": 5}, {"menu_name": "Spaghetti", "unit_price": 300, "qty": 10}, {"menu_id": 3, "menu_name": " Cheeseburger", "unit_price": "120.50", "qty": 9, "note": ""}]
