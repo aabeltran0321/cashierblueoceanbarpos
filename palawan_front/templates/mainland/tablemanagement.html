@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>POS - Table Management</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    <script src="{{ url_for('static', filename='scripts/3.4.17.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='scripts/all.min.css') }}"
         integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
@@ -299,16 +299,19 @@
                         <label
                             class="text-[10px] uppercase text-textGray font-bold tracking-wider mb-1 block group-focus-within:text-accentPurple transition-colors">Primary
                             Guest</label>
-                        <p id = "AvailablemainGuest" class="w-full bg-bgInput border border-gray-700 rounded-lg p-3 text-sm focus:border-accentPurple focus:outline-none hover:border-accentPurple hover:bg-accentPurple/10 text-white transition-colors" onclick="openModalKB('AvailablemainGuest');" style="cursor:pointer">Insert Name Here</p>
+                        <input type="text" value=""
+                            id = "AvailablemainGuest"
+                            placeholder="Insert Guest Name Here"
+                            class="w-full bg-bgInput border border-gray-700 rounded-lg p-3 text-sm focus:border-accentPurple focus:outline-none text-white transition-colors">
                       
                     </div>
                     <div class="group">
                         <label
                             class="text-[10px] uppercase text-textGray font-bold tracking-wider mb-1 block group-focus-within:text-accentPurple transition-colors">Contact</label>
-                            <p id="AvailablemainGuestcontact" class="w-full bg-bgInput border border-gray-700 rounded-lg p-3 text-sm focus:border-accentPurple focus:outline-none hover:border-accentPurple hover:bg-accentPurple/10 text-white transition-colors" onclick="openModalPhone('AvailablemainGuestcontact');" style="cursor:pointer">E.g. 09123456789</p>
-                            <!-- <input type="tel" value="+1 923 045 9221" 
+                            <!-- <p id="AvailablemainGuestcontact" class="w-full bg-bgInput border border-gray-700 rounded-lg p-3 text-sm focus:border-accentPurple focus:outline-none hover:border-accentPurple hover:bg-accentPurple/10 text-white transition-colors" onclick="openModalPhone('AvailablemainGuestcontact');" style="cursor:pointer">E.g. 09123456789</p> -->
+                            <input type="tel" value="" placeholder="E.g. +1 923 045 9221"
                             id="AvailablemainGuestcontact"
-                            class="w-full bg-bgInput border border-gray-700 rounded-lg p-3 text-sm focus:border-accentPurple focus:outline-none text-white transition-colors"> -->
+                            class="w-full bg-bgInput border border-gray-700 rounded-lg p-3 text-sm focus:border-accentPurple focus:outline-none text-white transition-colors">
                     </div>
                     <div class="group">
                         <label
@@ -720,6 +723,66 @@
   </div>
 </div>
 
+<!-- Payment Modal Overlay for Billout -->
+<div id="PaymentModalBillout" class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 hidden">
+  <!-- Modal Container -->
+  <div class="w-3/5 bg-bgPanel rounded-2xl p-4 border border-gray-800 shadow-xl max-h-[90vh] overflow-y-auto">
+    
+    <!-- Header (optional) -->
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-bold text-white">Payment</h3>
+      <button onclick="closePaymentModalv2()"
+        class="w-8 h-8 rounded-full bg-gray-800 hover:bg-gray-700 flex items-center justify-center text-white active-press transition-colors">✕</button>
+    </div>
+
+    <!-- Payment Section -->
+    <div class="flex justify-between items-end mb-4">
+      <div class="flex flex-col">
+        <span class="text-xs text-textGray font-bold uppercase">Total Due</span>
+        <span class="text-2xl font-bold text-white tracking-tight" id="AvailabletotalDisplayBillout">P 15,000.00</span>
+      </div>
+      <div class="text-right">
+        <span class="text-xs text-textGray font-bold uppercase">Amount Paid</span>
+        <div class="text-2xl font-mono text-accentPurple font-bold" id="numpadInputBillout">0</div>
+      </div>
+    </div>
+
+    <!-- Payment Method Buttons -->
+    <div class="flex space-x-2 mb-4">
+      <button
+        class="flex-1 py-2 bg-accentPurple text-white text-xs font-bold rounded hover:bg-accentDark border border-accentPurple transition-colors shadow-[0_0_10px_rgba(124,58,237,0.3)]">CASH</button>
+      <button
+        class="flex-1 py-2 bg-gray-800 text-gray-400 text-xs font-bold rounded hover:bg-gray-700 border border-gray-700 transition-colors">CARD</button>
+      <button
+        class="flex-1 py-2 bg-gray-800 text-gray-400 text-xs font-bold rounded hover:bg-gray-700 border border-gray-700 transition-colors">OTHER</button>
+    </div>
+
+    <!-- Numpad -->
+    <div class="grid grid-cols-4 gap-2 h-48">
+      <button class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors" onclick="numClickv2('1')">1</button>
+      <button class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors" onclick="numClickv2('2')">2</button>
+      <button class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors" onclick="numClickv2('3')">3</button>
+      <button class="active-press bg-gray-700/50 rounded text-xs font-bold text-gray-300 hover:bg-gray-600 transition-colors border border-gray-700" onclick="quickAddv2(1000)">+1,000</button>
+
+      <button class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors" onclick="numClickv2('4')">4</button>
+      <button class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors" onclick="numClickv2('5')">5</button>
+      <button class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors" onclick="numClickv2('6')">6</button>
+      <button class="active-press bg-gray-700/50 rounded text-xs font-bold text-gray-300 hover:bg-gray-600 transition-colors border border-gray-700" onclick="quickAddv2(5000)">+5,000</button>
+
+      <button class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors" onclick="numClickv2('7')">7</button>
+      <button class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors" onclick="numClickv2('8')">8</button>
+      <button class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors" onclick="numClickv2('9')">9</button>
+      <button class="active-press bg-gray-700/50 rounded text-xs font-bold text-gray-300 hover:bg-gray-600 transition-colors border border-gray-700" onclick="quickAddv2(10000)">+10,000</button>
+
+      <button class="active-press bg-accentPurple/10 text-accentPurple rounded text-lg font-bold hover:bg-accentPurple/20 border border-accentPurple/30 transition-colors" onclick="numClearv2()">C</button>
+      <button class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors" onclick="numClickv2('0')">0</button>
+      <button class="active-press bg-gray-800 rounded text-lg font-bold hover:bg-gray-700 transition-colors" onclick="numClickv2('00')">00</button>
+
+      <button class="active-press bg-statusGreen text-white rounded font-bold text-xl hover:bg-green-600 flex items-center justify-center shadow-[0_0_15px_rgba(22,163,74,0.3)] transition-all" onclick="closePaymentModalv21();">SUBMIT</button>
+    </div>
+  </div>
+</div>
+
 
 <div id="modalDiscount" class="fixed inset-0 bg-black/90 hidden flex items-center justify-center z-[9999]">
   <div class="bg-[#1e2128] w-[480px] max-w-md rounded-2xl shadow-2xl border border-gray-700 p-8">
@@ -865,6 +928,7 @@
         const confirmItemsList = document.getElementById('confirmItemsList');
 
         let currentInput = '';
+        let currentInputv2= '';
         let currentTotal = 15000;
 
         // Default item for reset
@@ -932,8 +996,8 @@
             AvailablemodalDeckSelected
             document.getElementById("AvailablemodalDeckSelected").innerText = tableDataSelected.location.toUpperCase();
 
-            document.getElementById("AvailablemainGuest").innerText = "Insert Name Here";
-            document.getElementById("AvailablemainGuestcontact").innerText = "E.g. 09123456789";
+            // document.getElementById("AvailablemainGuest").innerText = "Insert Name Here";
+            // document.getElementById("AvailablemainGuestcontact").innerText = "E.g. 09123456789";
             const addon_container = document.getElementById("AvailablemodalAddGuest");
             addon_container.innerHTML = ''; // Clear previous inputs
 
@@ -1213,6 +1277,10 @@
     const amountPaid = 0;
     const totalChange = amountPaid - netBilling;
 
+    const vatPercent = 12; // 12%
+    const vatAmount = (netBilling * vatPercent) / 100;
+
+
     // Render Payment Summary
     orderList.innerHTML += `
         <div class="flex justify-between border-b pt-2 pb-2 border-gray-800 flex-none">
@@ -1238,21 +1306,28 @@
                 </span>
             </div>
 
-            <div class="flex justify-between">
-                <span class="text-textGray font-medium">Excess Charges (Spillage):</span>
-                <span class="font-bold text-red-400">P ${spillage.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-            </div>
+            
 
             <div class="flex justify-between">
+                <span class="text-textGray font-medium">Excess Charges (Spillage):</span>
+                <span class="font-bold text-red-400" id="totalBillText">P ${spillage.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="text-textGray font-medium">VAT (${vatPercent}%):</span>
+                <span id="vatAmountText" class="font-bold text-green-400">
+                    P ${vatAmount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </span>
+            </div>
+            <div class="flex justify-between">
                 <span class="text-textGray font-medium">Amount Paid:</span>
-                <span class="font-bold text-purple-400" onclick="openPaymentModal();" style="cursor:pointer; text-decoration:underline;">
+                <span class="font-bold text-purple-400" id="amountPaidText" onclick="openPaymentModalv2();" style="cursor:pointer; text-decoration:underline;">
                     P ${amountPaid.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
             </div>
 
             <div class="flex justify-between">
                 <span class="text-textGray font-medium">Total Change:</span>
-                <span class="font-bold text-green-400">P ${totalChange.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                <span id="totalChangeText" class="font-bold text-green-400">P ${totalChange.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </div>
         </div>
     `;
@@ -1354,6 +1429,18 @@
             }
         }
 
+        function numClickv2(val) {
+            if (currentInputv2.length < 10) {
+                // Prevent multiple leading zeros
+                if (currentInputv2 === '0' && val !== '0' && val !== '00') {
+                    currentInputv2 = val;
+                } else {
+                    currentInputv2 += val;
+                }
+                updateNumpadv2();
+            }
+        }
+
         function numClear() {
             currentInput = '';
             updateNumpad();
@@ -1373,6 +1460,29 @@
                 let num = parseFloat(currentInput);
                 numpadInput.innerText = num.toLocaleString('en-US');
             }
+        }
+
+        
+
+        function updateNumpadv2() {
+            if (currentInputv2 === '') {
+                document.getElementById('numpadInputBillout').innerText = '0';
+            } else {
+                let num = parseFloat(currentInputv2);
+                document.getElementById('numpadInputBillout').innerText = num.toLocaleString('en-US');
+            }
+        }
+
+        function quickAddv2(val) {
+            let currentVal = currentInputv2 === '' ? 0 : parseFloat(currentInputv2);
+            let newVal = currentVal + val;
+            currentInput = newVal.toString();
+            updateNumpadv2();
+        }
+
+        function numClearv2() {
+            currentInputv2 = '';
+            updateNumpadv2();
         }
 
         // --- EVENT LISTENERS ---
@@ -1659,6 +1769,28 @@ function submitDiscountInput() {
     // Close the discount modal
     closeModalDiscount();
 }
+
+function submitDiscountInputv2() {
+    const totalBill = parseFloat(pesotoFloat(document.getElementById("totalBillText").innerText));
+
+    const amountPaid = parseFloat(pesotoFloat(document.getElementById("amountPaidText").innerText));
+
+    // Calculate VAT 12% after discount
+    const vatPercent = 12; // 12%
+    const vatAmount = ((totalBill) * vatPercent) / 100;
+    document.getElementById('vatAmountText').innerText = `P ${vatAmount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+    // Update net billing (after discount + VAT)
+    const netBilling = (totalBill);
+    document.getElementById('totalBillText').innerText = `P ${netBilling.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+    // Update total change
+    const totalChange = amountPaid - netBilling;
+    document.getElementById('totalChangeText').innerText = `P ${totalChange.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+    // Close the discount modal
+    closeModalDiscount();
+}
 </script>
 
 
@@ -1680,13 +1812,13 @@ async function postTransaction(id) {
         // Collect main guest info
 
         
-        const customer_name = document.getElementById("AvailablemainGuest").innerText.trim();
-        const contact_number = document.getElementById("AvailablemainGuestcontact").innerText.trim();
-        if (customer_name === "Insert Name Here"){
+        const customer_name = document.getElementById("AvailablemainGuest").value.trim();
+        const contact_number = document.getElementById("AvailablemainGuestcontact").value.trim();
+        if (customer_name.length<3){
             showAlert("Invalid Customer Name", "Insert Correct Customer Name")
             return;
         }
-        if (contact_number === "E.g. 09123456789"){
+        if (contact_number.length<3){
             showAlert("Invalid Contact Number", "Insert Contact Number")
             return;
         }
@@ -1801,7 +1933,38 @@ function closeAlertModal() {
     }
     
 </script>
+<script>
+    //payment for billout
 
+function openPaymentModalv2() {
+    const totalnet_billing = parseFloat(pesotoFloat(document.getElementById("totalBillText").innerText));
+
+    document.getElementById("AvailabletotalDisplayBillout").innerText = `P ${totalnet_billing.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+    document.getElementById('PaymentModalBillout').classList.remove('hidden');
+  }
+
+  function closePaymentModalv2(){
+    document.getElementById('PaymentModalBillout').classList.add('hidden');
+  }
+
+  function closePaymentModalv21() {
+    const amountPaid = parseFloat(pesotoFloat(document.getElementById("numpadInputBillout").innerText));
+
+    const totalnet_billing = parseFloat(pesotoFloat(document.getElementById("totalBillText").innerText));
+
+    if (amountPaid<totalnet_billing){
+        errorModal.classList.remove('hidden');
+        return;
+    }
+    
+    document.getElementById("amountPaidText").innerText =`P ${amountPaid.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+   
+    submitDiscountInputv2();
+    document.getElementById('PaymentModalBillout').classList.add('hidden');
+  }
+
+
+</script>
 </body>
 
 

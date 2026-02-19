@@ -1,6 +1,6 @@
 import socket
 
-printer_ip = "192.168.1.223"
+printer_ip = "192.168.1.220"
 port = 9100
 
 ESC = b'\x1b'

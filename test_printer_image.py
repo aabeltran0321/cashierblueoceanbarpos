@@ -1,7 +1,7 @@
 from PIL import Image
 import socket
 
-printer_ip = "192.168.1.223"
+printer_ip = "192.168.1.220"
 port = 9100
 
 ESC = b'\x1b'
@@ -11,7 +11,7 @@ CUT_SAFE = b'\n\n\n\x1d\x56\x00'  # Safe cut: feed + full cut
 # -----------------------------
 # Step 1: Prepare logo image
 # -----------------------------
-image = Image.open("./static/images/Icon.jpg").convert('1')  # Convert to 1-bit
+image = Image.open("./BlueOceanBar.png").convert('1')  # Convert to 1-bit
 
 # Resize if wider than 384px
 if image.width > 384:
@@ -20,8 +20,10 @@ if image.width > 384:
     image = image.resize((384, new_height))
 
 # Centering: calculate left padding
-total_width = 384
-left_padding = (total_width - image.width) // 2
+total_width = 400
+left_padding = 90
+
+
 
 width, height = image.size
 pixels = image.load()

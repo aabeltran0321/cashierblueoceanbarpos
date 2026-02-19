@@ -26,6 +26,7 @@ from db_models.recreational_activities_model import get_recreational_activity, g
 from db_models.decks_model import get_deck, post_deck, put_deck, delete_deck
 from db_models.orders_model import get_order, post_order, put_order, delete_order
 from db_models.table_guest_model import get_table_guest, get_all_table_guest
+from printer_module import send_to_printer_registration,build_receipt
 app = Flask(__name__)
 CORS(app)
 
@@ -397,26 +398,67 @@ def get_transaction_by_receipt_route(transaction_id=None):
 @app.route("/transactions", methods=["POST"])
 def post_transaction_route():
 
-    try:
-        data = request.get_json()
+    # try:
+    data = request.get_json()
 
-        if not data:
-            return jsonify({
-                "status": "error",
-                "message": "No input data provided"
-            }), 400
+    if not data:
+        return jsonify({
+            "status": "error",
+            "message": "No input data provided"
+        }), 400
 
-        result = post_transaction(data=data)
-        print(result)
 
-        if result["status"] == "success":
-            return jsonify(result), 201
-        else:
-            return jsonify(result), 500
+    deck_prices = {item['deck']: item['price'] for item in get_deck()}
 
-    except Exception as e:
-        print(e)
-        return jsonify({"status": "error", "message": str(e)})
+    print(data)
+    table_info = get_table(int(data.get("table_assigned")))[0]
+
+    services_availed = [{
+        "multiplier": float(deck_prices[table_info.get('location')]), 
+        "deck": table_info.get('location'), 
+        "boatride": deck_prices['boatride'], 
+        "entrancefee": deck_prices['entrancefee']},]
+    
+    data['services_availed'] = services_availed + data.get("services_availed")
+    
+    result = post_transaction(data=data)
+
+    
+
+    
+
+    data1 = {
+        "transaction_id": data.get('transaction_id'),
+        "table": table_info.get("tableName"),
+        "guests": table_info['capacity'],
+
+        "boat_fee": float(table_info['capacity'])*float(deck_prices['boatride']),
+        "entrance_fee": float(table_info['capacity'])*float(deck_prices['entrancefee']),
+        "consumables": float(table_info['capacity']) * (float(deck_prices[table_info.get('location')]) - float(deck_prices['entrancefee']) - float(deck_prices['boatride'])),
+
+        "total_bill": data.get("total_billing"),
+        "discount": data.get("discount"),
+        "vat": float(data.get("totalnetbilling"))*0.12,
+        "net_total": data.get('totalnetbilling'),
+        "amount_paid": data.get("total_amount_paid"),
+        "change": data.get("total_change")
+    }
+
+    receipt = build_receipt(data1)
+    send_to_printer_registration(receipt, logo_path="./BlueOceanBar.png")
+
+    print(result)
+
+    result = {"status":"success"}
+
+    if result["status"] == "success":
+        return jsonify(result), 201
+    else:
+        return jsonify(result), 500
+
+    # except Exception as e:
+    #     print(e)
+    #     return jsonify({"status": "error", "message": str(e)})
 
 @app.route("/transactions/<int:id>", methods=["PUT"])
 def put_transaction_route(id):
@@ -428,8 +470,10 @@ def put_transaction_route(id):
                 "status": "error",
                 "message": "No input data provided"
             }), 400
-
+        
         result = put_transaction(id=id, data=data)
+
+        
 
         return jsonify(result)
 
@@ -899,7 +943,7 @@ def mainland_tablemanagement():
                     transaction['totalServicesAvailed'] += (float(service['unit_price'])*float(service['qty']))
             row_table.update(transaction)
 
-    #print(tables)
+    print(tables)
     return render_template("/mainland/tablemanagement.html",
                            tables=tables,
                            deck_prices=deck_prices)
