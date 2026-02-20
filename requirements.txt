@@ -11,3 +11,4 @@ mysql-connector-python==9.6.0
 pytz==2025.2
 Werkzeug==3.1.5
 zope.interface==8.2
+requests
