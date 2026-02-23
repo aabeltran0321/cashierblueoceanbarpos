@@ -1,0 +1,108 @@
+{
+  "success": true,
+  "data": {
+    "propertyID": "319844",
+    "guestName": "Jens Hasselmann",
+    "guestEmail": "hasselmann@klinikimkurpark.de",
+    "isAnonymized": false,
+    "guestList": {
+      "166586297": {
+        "guestID": "166586297",
+        "guestFirstName": "Jens",
+        "guestLastName": "Hasselmann",
+        "guestGender": "N/A",
+        "guestEmail": "hasselmann@klinikimkurpark.de",
+        "guestPhone": "+491723721333",
+        "guestCellPhone": "",
+        "guestCountry": "DE",
+        "guestAddress": "",
+        "guestAddress2": "",
+        "guestCity": "",
+        "guestZip": "",
+        "guestState": "",
+        "guestStatus": "not_checked_in",
+        "guestBirthdate": "",
+        "guestDocumentType": "",
+        "guestDocumentNumber": "",
+        "guestDocumentIssueDate": "",
+        "guestDocumentIssuingCountry": "",
+        "guestDocumentExpirationDate": "",
+        "assignedRoom": true,
+        "roomID": "671974-4",
+        "roomName": "MAI(5)",
+        "roomTypeName": "MAIN DECK PASS - FRONT FACADE",
+        "isMainGuest": true,
+        "isAnonymized": false,
+        "taxID": "",
+        "companyTaxID": "",
+        "companyName": "",
+        "customFields": [],
+        "unassignedRooms": [],
+        "rooms": [
+          {
+            "reservationRoomID": "216879667",
+            "roomTypeID": "671974",
+            "roomTypeName": "MAIN DECK PASS - FRONT FACADE",
+            "roomTypeIsVirtual": false,
+            "roomID": "671974-4",
+            "roomName": "MAI(5)",
+            "subReservationID": "3319361565735"
+          }
+        ]
+      }
+    },
+    "reservationID": "3319361565735",
+    "dateCreated": "2026-02-18 14:43:42",
+    "dateModified": "2026-02-20 13:29:24",
+    "source": "Website/Booking Engine",
+    "sourceID": "s-1",
+    "thirdPartyIdentifier": "",
+    "status": "not_confirmed",
+    "total": 5000,
+    "balance": 5000,
+    "balanceDetailed": {
+      "suggestedDeposit": "5000.00",
+      "subTotal": 5000,
+      "additionalItems": 0,
+      "taxesFees": 0,
+      "grandTotal": 5000,
+      "paid": 0
+    },
+    "assigned": [
+      {
+        "reservationRoomID": "216879667",
+        "roomTypeName": "MAIN DECK PASS - FRONT FACADE",
+        "roomTypeNameShort": "MAI",
+        "roomTypeIsVirtual": false,
+        "roomTypeID": "671974",
+        "subReservationID": "3319361565735",
+        "startDate": "2026-03-15",
+        "endDate": "2026-03-16",
+        "adults": "2",
+        "children": "0",
+        "dailyRates": [
+          {
+            "date": "2026-03-15",
+            "rate": 5000
+          }
+        ],
+        "roomTotal": "5000.00",
+        "marketName": "Retail",
+        "marketCode": "RTL",
+        "roomName": "MAI(5)",
+        "roomID": "671974-4"
+      }
+    ],
+    "unassigned": [],
+    "cardsOnFile": [],
+    "customFields": [],
+    "startDate": "2026-03-15",
+    "endDate": "2026-03-16",
+    "allotmentBlockCode": null,
+    "orderId": "",
+    "origin": "",
+    "cancellation": null
+  }
+}
+
+
