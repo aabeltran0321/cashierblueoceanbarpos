@@ -1,6 +1,6 @@
 import requests
 
-token_key = "cbat_ytHoA2RACmuxpTP9TcdSJdPUS4JjreuN"
+token_key = ""
 def get_reservations():
     url = "https://api.cloudbeds.com/api/v1.3/getReservations"
 
