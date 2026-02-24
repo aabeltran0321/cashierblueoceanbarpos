@@ -1,6 +1,6 @@
 import requests
 
-token_key = ""
+token_key = "cbat_ytHoA2RACmuxpTP9TcdSJdPUS4JjreuN"
 def get_reservations():
     url = "https://api.cloudbeds.com/api/v1.3/getReservations"
 
@@ -135,11 +135,16 @@ for row in get_reservations()['data']:
     reservationID = row['reservationID']
     #roomID = row['roomID']
 
-    reservation_response = get_reservation_by_id(reservationID)
-    if len(reservation_response['data']['assigned']):
-        print(reservation_response['data']['unassigned'])
-        rooms_response = get_seating_capacity()
+    if row['status'] == "not_confirmed":
+        reservation_response = get_reservation_by_id(reservationID)
+        if len(reservation_response['data']['unassigned']):
+            room_data = reservation_response['data']['unassigned'][0]
+        elif len(reservation_response['data']['assigned']):
+            room_data = reservation_response['data']['assigned'][0]
 
-        data = extract_reservation_details(reservation_response, rooms_response)
+        print(room_data['roomID'])
+    # rooms_response = get_seating_capacity()
 
-        print(data)
+    # data = extract_reservation_details(reservation_response, rooms_response)
+
+    # print(data)

@@ -1,0 +1,252 @@
+{
+  "success": true,
+  "data": [
+    {
+      "propertyID": "319844",
+      "rooms": [
+        {
+          "roomID": "671906-0",
+          "roomName": "TAB(1)",
+          "roomDescription": "",
+          "maxGuests": 15,
+          "isPrivate": true,
+          "isVirtual": false,
+          "roomBlocked": true,
+          "roomTypeID": "671906",
+          "roomTypeName": "MAIN DECK PASS - SUNSET VIEW",
+          "roomTypeNameShort": "TAB"
+        },
+        {
+          "roomID": "671906-1",
+          "roomName": "TAB(2)",
+          "roomDescription": "",
+          "maxGuests": 15,
+          "isPrivate": true,
+          "isVirtual": false,
+          "roomBlocked": true,
+          "roomTypeID": "671906",
+          "roomTypeName": "MAIN DECK PASS - SUNSET VIEW",
+          "roomTypeNameShort": "TAB"
+        },
+        {
+          "roomID": "671906-2",
+          "roomName": "TAB(3)",
+          "roomDescription": "",
+          "maxGuests": 15,
+          "isPrivate": true,
+          "isVirtual": false,
+          "roomBlocked": true,
+          "roomTypeID": "671906",
+          "roomTypeName": "MAIN DECK PASS - SUNSET VIEW",
+          "roomTypeNameShort": "TAB"
+        },
+        {
+          "roomID": "671907-0",
+          "roomName": "SKY(1)",
+          "roomDescription": "",
+          "maxGuests": 12,
+          "isPrivate": true,
+          "isVirtual": false,
+          "roomBlocked": true,
+          "roomTypeID": "671907",
+          "roomTypeName": "SKY DECK VIP - SUNSET VIEW SOUTH",
+          "roomTypeNameShort": "SKY"
+        },
+        {
+          "roomID": "671907-1",
+          "roomName": "SKY(2)",
+          "roomDescription": "",
+          "maxGuests": 12,
+          "isPrivate": true,
+          "isVirtual": false,
+          "roomBlocked": true,
+          "roomTypeID": "671907",
+          "roomTypeName": "SKY DECK VIP - SUNSET VIEW SOUTH",
+          "roomTypeNameShort": "SKY"
+        },
+        {
+          "roomID": "671972-0",
+          "roomName": "MAI(1)",
+          "roomDescription": "",
+          "maxGuests": 17,
+          "isPrivate": true,
+          "isVirtual": false,
+          "roomBlocked": true,
+          "roomTypeID": "671972",
+          "roomTypeName": "MAIN DECK PASS - JACUZZI COUCH",
+          "roomTypeNameShort": "MAI"
+        },
+        {
+          "roomID": "671972-1",
+          "roomName": "MAI(2)",
+          "roomDescription": "",
+          "maxGuests": 17,
+          "isPrivate": true,
+          "isVirtual": false,
+          "roomBlocked": true,
+          "roomTypeID": "671972",
+          "roomTypeName": "MAIN DECK PASS - JACUZZI COUCH",
+          "roomTypeNameShort": "MAI"
+        },
+        {
+          "roomID": "671972-2",
+          "roomName": "MAI(3)",
+          "roomDescription": "",
+          "maxGuests": 17,
+          "isPrivate": true,
+          "isVirtual": false,
+          "roomBlocked": true,
+          "roomTypeID": "671972",
+          "roomTypeName": "MAIN DECK PASS - JACUZZI COUCH",
+          "roomTypeNameShort": "MAI"
+        },
+        {
+          "roomID": "671972-3",
+          "roomName": "MAI(4)",
+          "roomDescription": "",
+          "maxGuests": 17,
+          "isPrivate": true,
+          "isVirtual": false,
+          "roomBlocked": true,
+          "roomTypeID": "671972",
+          "roomTypeName": "MAIN DECK PASS - JACUZZI COUCH",
+          "roomTypeNameShort": "MAI"
+        },
+        {
+          "roomID": "671973-0",
+          "roomName": "MAI(1)",
+          "roomDescription": "",
+          "maxGuests": 12,
+          "isPrivate": true,
+          "isVirtual": false,
+          "roomBlocked": true,
+          "roomTypeID": "671973",
+          "roomTypeName": "MAIN DECK PASS - SEA COUCH",
+          "roomTypeNameShort": "MAI"
+        },
+        {
+          "roomID": "671973-1",
+          "roomName": "MAI(2)",
+          "roomDescription": "",
+          "maxGuests": 12,
+          "isPrivate": true,
+          "isVirtual": false,
+          "roomBlocked": true,
+          "roomTypeID": "671973",
+          "roomTypeName": "MAIN DECK PASS - SEA COUCH",
+          "roomTypeNameShort": "MAI"
+        },
+        {
+          "roomID": "671973-2",
+          "roomName": "MAI(3)",
+          "roomDescription": "",
+          "maxGuests": 12,
+          "isPrivate": true,
+          "isVirtual": false,
+          "roomBlocked": true,
+          "roomTypeID": "671973",
+          "roomTypeName": "MAIN DECK PASS - SEA COUCH",
+          "roomTypeNameShort": "MAI"
+        },
+        {
+          "roomID": "671973-3",
+          "roomName": "MAI(4)",
+          "roomDescription": "",
+          "maxGuests": 12,
+          "isPrivate": true,
+          "isVirtual": false,
+          "roomBlocked": true,
+          "roomTypeID": "671973",
+          "roomTypeName": "MAIN DECK PASS - SEA COUCH",
+          "roomTypeNameShort": "MAI"
+        },
+        {
+          "roomID": "671974-0",
+          "roomName": "MAI(1)",
+          "roomDescription": "",
+          "maxGuests": 4,
+          "isPrivate": true,
+          "isVirtual": false,
+          "roomBlocked": true,
+          "roomTypeID": "671974",
+          "roomTypeName": "MAIN DECK PASS - FRONT FACADE",
+          "roomTypeNameShort": "MAI"
+        },
+        {
+          "roomID": "671974-1",
+          "roomName": "MAI(2)",
+          "roomDescription": "",
+          "maxGuests": 4,
+          "isPrivate": true,
+          "isVirtual": false,
+          "roomBlocked": true,
+          "roomTypeID": "671974",
+          "roomTypeName": "MAIN DECK PASS - FRONT FACADE",
+          "roomTypeNameShort": "MAI"
+        },
+        {
+          "roomID": "671974-2",
+          "roomName": "MAI(3)",
+          "roomDescription": "",
+          "maxGuests": 4,
+          "isPrivate": true,
+          "isVirtual": false,
+          "roomBlocked": true,
+          "roomTypeID": "671974",
+          "roomTypeName": "MAIN DECK PASS - FRONT FACADE",
+          "roomTypeNameShort": "MAI"
+        },
+        {
+          "roomID": "671974-3",
+          "roomName": "MAI(4)",
+          "roomDescription": "",
+          "maxGuests": 4,
+          "isPrivate": true,
+          "isVirtual": false,
+          "roomBlocked": true,
+          "roomTypeID": "671974",
+          "roomTypeName": "MAIN DECK PASS - FRONT FACADE",
+          "roomTypeNameShort": "MAI"
+        },
+        {
+          "roomID": "671974-4",
+          "roomName": "MAI(5)",
+          "roomDescription": "",
+          "maxGuests": 4,
+          "isPrivate": true,
+          "isVirtual": false,
+          "roomBlocked": true,
+          "roomTypeID": "671974",
+          "roomTypeName": "MAIN DECK PASS - FRONT FACADE",
+          "roomTypeNameShort": "MAI"
+        },
+        {
+          "roomID": "671974-5",
+          "roomName": "MAI(6)",
+          "roomDescription": "",
+          "maxGuests": 4,
+          "isPrivate": true,
+          "isVirtual": false,
+          "roomBlocked": true,
+          "roomTypeID": "671974",
+          "roomTypeName": "MAIN DECK PASS - FRONT FACADE",
+          "roomTypeNameShort": "MAI"
+        },
+        {
+          "roomID": "671974-6",
+          "roomName": "MAI(7)",
+          "roomDescription": "",
+          "maxGuests": 4,
+          "isPrivate": true,
+          "isVirtual": false,
+          "roomBlocked": true,
+          "roomTypeID": "671974",
+          "roomTypeName": "MAIN DECK PASS - FRONT FACADE",
+          "roomTypeNameShort": "MAI"
+        }
+      ]
+    }
+  ],
+  "count": 20,
+  "total": 221
+}
