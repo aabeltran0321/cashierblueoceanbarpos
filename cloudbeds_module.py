@@ -1,6 +1,11 @@
 import requests
+from dotenv import load_dotenv
+import os
 
-token_key = ""
+load_dotenv()
+
+token_key = os.getenv("cloudbled_token")
+print(token_key)
 def get_reservations():
     url = "https://api.cloudbeds.com/api/v1.3/getReservations"
 
@@ -13,9 +18,12 @@ def get_reservations():
 
     return response.json()
 
-def getRooms():
+def getRooms(roomTypeID:str):
 
-    url = "https://api.cloudbeds.com/api/v1.3/getRooms"
+    if len(roomTypeID):
+        url = f"https://api.cloudbeds.com/api/v1.3/getRooms?roomTypeID={roomTypeID}"
+    else:
+        url = "https://api.cloudbeds.com/api/v1.3/getRooms"
 
     headers = {
         "accept": "application/json",
@@ -133,18 +141,19 @@ def get_seating_capacity(room_id, rooms_response):
 
 for row in get_reservations()['data']:
     reservationID = row['reservationID']
+    #print(reservationID)
     #roomID = row['roomID']
 
     if row['status'] == "not_confirmed":
-        reservation_response = get_reservation_by_id(reservationID)
-        if len(reservation_response['data']['unassigned']):
-            room_data = reservation_response['data']['unassigned'][0]
-        elif len(reservation_response['data']['assigned']):
-            room_data = reservation_response['data']['assigned'][0]
-
-        print(room_data['roomID'])
-    # rooms_response = get_seating_capacity()
-
-    # data = extract_reservation_details(reservation_response, rooms_response)
-
-    # print(data)
+        print(reservationID)
+        try:
+            reservation_response = get_reservation_by_id(reservationID)
+            if len(reservation_response['data']['unassigned']):
+                room_data = reservation_response['data']['unassigned']
+            elif len(reservation_response['data']['assigned']):
+                room_data = reservation_response['data']['assigned']
+            
+            print(room_data)
+        except Exception as e:
+            print(e)
+    
